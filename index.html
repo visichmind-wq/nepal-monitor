@@ -1,0 +1,1204 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Пошук у Непалі — статус</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🔎</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500&display=swap">
+<style>
+/* ══════════ ТОКЕНИ ══════════ */
+:root{
+  --paper:#F1F4F6; --surface:#FFFFFF; --sunk:#E8EDF1;
+  --ink:#16202A; --ink-soft:#3D4C59; --muted:#67757F; --hair:#D3DBE1;
+  --accent:#2C5A82; --accent-soft:#E1EAF2;
+  --ok:#2E7A4E;  --ok-bg:#E2EFE8;
+  --high:#836211; --high-bg:#F3EBD3;
+  --mid:#9E4E1B;  --mid-bg:#F5E5D8;
+  --low:#A0352D;  --low-bg:#F5E0DD;
+  --rule:2px;
+  --fp-bg:#141C24; --fp-ink:#DFE8EF; --fp-title:#FFFFFF; --fp-rail:#8FB6D9;
+  --fp-link:#9CC3E4; --fp-hair:#2C3844; --fp-muted:#A7B6C2;
+  --fp-ok:#7ECB9B; --fp-ok-bg:#18321F; --fp-mid:#E19159; --fp-mid-bg:#33210F;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1317; --surface:#161D23; --sunk:#1D262E;
+    --ink:#E6ECF1; --ink-soft:#C2CDD6; --muted:#8D9BA6; --hair:#28323B;
+    --accent:#84AED6; --accent-soft:#1B2833;
+    --ok:#79C596;  --ok-bg:#182E22;
+    --high:#D4AE59; --high-bg:#2F2812;
+    --mid:#DC8853;  --mid-bg:#2F1F0E;
+    --low:#DC857D;  --low-bg:#321917;
+    --fp-bg:#1E2833; --fp-ink:#E4EBF1; --fp-title:#FFFFFF; --fp-rail:#84AED6;
+    --fp-link:#A8CBE8; --fp-hair:#35424F; --fp-muted:#A9B8C4;
+    --fp-ok:#84CCA0; --fp-ok-bg:#1D3827; --fp-mid:#E59B65; --fp-mid-bg:#3A2712;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1317; --surface:#161D23; --sunk:#1D262E;
+  --ink:#E6ECF1; --ink-soft:#C2CDD6; --muted:#8D9BA6; --hair:#28323B;
+  --accent:#84AED6; --accent-soft:#1B2833;
+  --ok:#79C596;  --ok-bg:#182E22;
+  --high:#D4AE59; --high-bg:#2F2812;
+  --mid:#DC8853;  --mid-bg:#2F1F0E;
+  --low:#DC857D;  --low-bg:#321917;
+  --fp-bg:#1E2833; --fp-ink:#E4EBF1; --fp-title:#FFFFFF; --fp-rail:#84AED6;
+  --fp-link:#A8CBE8; --fp-hair:#35424F; --fp-muted:#A9B8C4;
+  --fp-ok:#84CCA0; --fp-ok-bg:#1D3827; --fp-mid:#E59B65; --fp-mid-bg:#3A2712;
+}
+
+/* ══════════ БАЗА ══════════ */
+*{box-sizing:border-box; min-width:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px; line-height:1.55;
+  overflow-wrap:break-word;
+}
+.shell{max-width:1000px; margin:0 auto; padding:0 20px 72px}
+a{color:var(--accent); text-decoration-thickness:1px; text-underline-offset:2px}
+a:focus-visible, [tabindex]:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:2px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums}
+h1,h2,h3{font-family:"Archivo","IBM Plex Sans",sans-serif; text-wrap:balance; line-height:1.18; margin:0}
+h1{font-size:clamp(1.45rem,4vw,1.9rem); font-weight:700; letter-spacing:-.01em}
+h2{font-size:1.1rem; font-weight:600}
+h3{font-size:.95rem; font-weight:600; margin-bottom:2px}
+p{margin:0}
+
+/* ══════════ ШАПКА ══════════ */
+.masthead{padding:26px 0 16px; border-bottom:var(--rule) solid var(--ink)}
+.masthead .kicker{
+  font-family:"IBM Plex Mono",monospace; font-size:.72rem; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+}
+.masthead .sub{margin-top:8px; font-size:.9rem; color:var(--ink-soft); max-width:62ch}
+
+/* липкий рядок стану */
+.statusbar{
+  position:sticky; top:0; z-index:20;
+  background:var(--paper); border-bottom:1px solid var(--hair);
+  display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 20px;
+  padding:9px 0; margin-bottom:0; font-size:.78rem; color:var(--muted);
+  /* власний шар: iOS Safari інакше залишає липкий елемент із фоном,
+     намальованим до застосування теми, і він світлішає на темній сторінці */
+  transform:translateZ(0); -webkit-backface-visibility:hidden; backface-visibility:hidden;
+}
+.statusbar b{color:var(--ink); font-weight:500}
+.statusbar .when{display:flex; flex-wrap:wrap; gap:2px 14px; align-items:baseline}
+.statusbar nav{
+  display:flex; gap:14px; margin-left:auto; white-space:nowrap;
+  overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  max-width:100%;
+}
+.statusbar nav::-webkit-scrollbar{display:none}
+.statusbar nav a{color:var(--muted); text-decoration:none; border-bottom:1px solid transparent}
+.statusbar nav a:hover, .statusbar nav a:focus-visible{color:var(--accent); border-bottom-color:var(--accent)}
+@media (max-width:780px){
+  /* на телефоні смуга не липка: вона з'їдає висоту, накладається на текст
+     і саме в такому стані ловить баг перемальовування в iOS */
+  .statusbar{
+    position:static; flex-direction:column; align-items:stretch; gap:8px;
+    padding:10px 0 9px; transform:none;
+  }
+  /* на телефоні розділи переносяться в акуратні два рядки, а не ховаються
+     в горизонтальний скрол, який ніхто не знайде */
+  .statusbar nav{
+    margin-left:0; flex-wrap:wrap; row-gap:7px; column-gap:14px;
+    overflow-x:visible; white-space:normal;
+  }
+}
+
+/* ══════════ СЕКЦІЯ: гутер + тіло ══════════ */
+.block{
+  display:grid; grid-template-columns:150px minmax(0,1fr); column-gap:32px;
+  padding:26px 0 4px; border-top:1px solid var(--hair);
+}
+.block:first-of-type{border-top:none}
+.block[id]{scroll-margin-top:52px}
+.block > .label{
+  grid-column:1; align-self:start; position:sticky; top:44px;
+  font-family:"IBM Plex Mono",monospace; font-size:.72rem; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--muted); padding-top:3px; line-height:1.45;
+}
+.block > .body{grid-column:2; display:flex; flex-direction:column; gap:14px}
+@media (max-width:780px){
+  .block{grid-template-columns:minmax(0,1fr); row-gap:10px; padding-top:22px}
+  .block > .label{grid-column:1; position:static; padding-bottom:2px;
+    border-bottom:1px solid var(--hair); padding-bottom:8px}
+  .block > .body{grid-column:1}
+}
+
+/* ══════════ БЕЙДЖІ ══════════ */
+.badge{
+  display:inline-block; padding:1px 7px; border-radius:3px;
+  font-family:"IBM Plex Mono",monospace; font-size:.72rem; font-weight:500;
+  letter-spacing:.02em; white-space:nowrap;
+}
+.b-ok{background:var(--ok-bg); color:var(--ok)}
+.b-high{background:var(--high-bg); color:var(--high)}
+.b-mid{background:var(--mid-bg); color:var(--mid)}
+.b-low{background:var(--low-bg); color:var(--low)}
+
+/* ══════════ ГОЛОВНЕ ЗАРАЗ ══════════ */
+.lede{font-family:"Archivo",sans-serif; font-size:1.12rem; font-weight:500; line-height:1.35; text-wrap:pretty}
+.facts{display:flex; flex-direction:column; gap:9px; margin:0; padding:0; list-style:none}
+.facts li{display:grid; grid-template-columns:auto minmax(0,1fr); column-gap:10px; align-items:baseline}
+.facts li .badge{grid-column:1}
+.facts li span:last-child{grid-column:2}
+
+/* ══════════ ДЖЕРЕЛА ПІД ТВЕРДЖЕННЯМ ══════════ */
+.src{
+  font-size:.79rem; line-height:1.75; color:var(--muted);
+  padding-top:7px; border-top:1px dotted var(--hair);
+}
+.src a{display:inline-block; padding:1px 0}
+.src::before{content:"Перевірити · "; font-family:"IBM Plex Mono",monospace; font-size:.72rem;
+  letter-spacing:.06em; text-transform:uppercase}
+
+/* ══════════ ДЕЛЬТА ══════════ */
+.delta{display:flex; flex-direction:column; gap:0; margin:0; padding:0; list-style:none}
+.delta > li{
+  display:grid; grid-template-columns:11px minmax(0,1fr); column-gap:14px;
+  padding-bottom:16px; position:relative;
+}
+.delta > li::before{
+  content:""; width:9px; height:9px; border-radius:50%;
+  background:var(--accent); margin-top:7px; z-index:1;
+}
+.delta > li::after{
+  content:""; position:absolute; left:4px; top:18px; bottom:0; width:1px; background:var(--hair);
+}
+.delta > li:last-child{padding-bottom:0}
+.delta > li:last-child::after{display:none}
+.delta .txt{display:flex; flex-direction:column; gap:6px}
+.delta .txt > p:first-child > b{font-weight:600}
+
+/* ══════════ ФОКУС-ПАНЕЛЬ ══════════ */
+.focus{
+  background:var(--fp-bg); color:var(--fp-ink); border-radius:5px;
+  padding:22px 22px 20px; display:flex; flex-direction:column; gap:14px;
+  border-left:3px solid var(--fp-rail);
+}
+.focus h2, .focus h3, .focus .lede{color:var(--fp-title)}
+.focus a{color:var(--fp-link)}
+.focus .muted, .focus th{color:var(--fp-muted)}
+.focus .src{color:var(--fp-muted); border-top-color:var(--fp-hair)}
+.focus .b-ok{background:var(--fp-ok-bg); color:var(--fp-ok)}
+.focus .b-mid{background:var(--fp-mid-bg); color:var(--fp-mid)}
+.focus table{color:var(--fp-ink)}
+.focus th, .focus td{border-bottom-color:var(--fp-hair)}
+.focus .verdict{border-left-color:var(--fp-rail); color:var(--fp-ink)}
+
+/* ══════════ ПРОЦЕДУРНИЙ ТРЕК: ЩО РОБИТИ РОДИНІ ══════════ */
+.steps{display:flex; flex-direction:column; gap:0; margin:0; padding:0; list-style:none; counter-reset:st}
+.steps > li{
+  display:grid; grid-template-columns:26px minmax(0,1fr); column-gap:14px;
+  padding-bottom:18px; position:relative; counter-increment:st;
+}
+.steps > li::before{
+  content:counter(st); grid-column:1;
+  font-family:"IBM Plex Mono",monospace; font-size:.75rem; font-weight:500;
+  color:var(--accent); background:var(--accent-soft); border-radius:50%;
+  width:26px; height:26px; display:grid; place-items:center; z-index:1;
+}
+.steps > li::after{
+  content:""; position:absolute; left:12.5px; top:28px; bottom:0; width:1px; background:var(--hair);
+}
+.steps > li:last-child{padding-bottom:0}
+.steps > li:last-child::after{display:none}
+.steps .st-body{grid-column:2; display:flex; flex-direction:column; gap:7px; padding-top:3px}
+.steps h3{margin-bottom:0}
+.steps p{font-size:.92rem; line-height:1.58}
+.contacts{
+  background:var(--sunk); border-radius:4px; padding:12px 14px;
+  display:flex; flex-direction:column; gap:8px; font-size:.87rem;
+}
+.contacts .grp{
+  font-family:"IBM Plex Mono",monospace; font-size:.7rem; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--muted);
+}
+.contacts .row{
+  display:grid; grid-template-columns:minmax(0,1fr) auto; column-gap:16px; row-gap:2px;
+  align-items:baseline; padding:3px 0; border-bottom:1px solid var(--hair);
+}
+.contacts .row:last-child{border-bottom:none}
+.contacts .row .who{color:var(--ink-soft); line-height:1.45}
+.contacts .row .val{font-family:"IBM Plex Mono",monospace; font-weight:500; white-space:nowrap}
+@media (max-width:560px){
+  .contacts .row{grid-template-columns:minmax(0,1fr)}
+  .contacts .row .val{white-space:normal}
+}
+
+/* ══════════ ПЕРЕХІД НА СТОРІНКУ ПІДТРИМКИ ══════════ */
+.support{
+  display:grid; grid-template-columns:minmax(0,1fr) auto; column-gap:20px; row-gap:12px;
+  align-items:center; background:var(--accent-soft); border-radius:4px;
+  padding:15px 18px; text-decoration:none; color:var(--ink);
+  box-shadow:inset 0 0 0 1px var(--accent);
+  transition:box-shadow .2s, background .2s;
+}
+.support:hover, .support:focus-visible{background:var(--surface); box-shadow:inset 0 0 0 2px var(--accent)}
+.support .txt{display:flex; flex-direction:column; gap:4px}
+.support .t{font-family:"Archivo",sans-serif; font-size:1rem; font-weight:600; line-height:1.3}
+.support .d{font-size:.85rem; line-height:1.5; color:var(--ink-soft); max-width:56ch}
+.support .go{
+  font-family:"IBM Plex Mono",monospace; font-size:.75rem; letter-spacing:.04em;
+  color:var(--accent); white-space:nowrap; font-weight:500;
+}
+@media (max-width:620px){
+  .support{grid-template-columns:minmax(0,1fr)}
+  .support .go{justify-self:start}
+}
+
+/* ══════════ ОФІЦІЙНО ВІД УКРАЇНСЬКОЇ СТОРОНИ ══════════ */
+.official{
+  background:var(--surface); border:1px solid var(--accent);
+  border-left:4px solid var(--accent); border-radius:4px;
+  padding:16px 18px 15px; display:flex; flex-direction:column; gap:11px;
+}
+.official .who{
+  font-family:"IBM Plex Mono",monospace; font-size:.7rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--accent); font-weight:500;
+}
+.official h3{margin-bottom:0}
+.official .pts{display:flex; flex-direction:column; gap:8px; margin:0; padding:0; list-style:none}
+.official .pts li{
+  display:grid; grid-template-columns:auto minmax(0,1fr); column-gap:9px;
+  font-size:.92rem; line-height:1.55;
+}
+.official .pts li::before{content:"·"; color:var(--accent); font-weight:700}
+.official .hot{
+  background:var(--sunk); border-radius:4px; padding:11px 13px;
+  display:flex; flex-direction:column; gap:5px; font-size:.87rem;
+}
+.official .hot .t{
+  font-family:"IBM Plex Mono",monospace; font-size:.7rem; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--muted); margin-bottom:1px;
+}
+.official .hot .row{display:flex; flex-wrap:wrap; gap:2px 12px; align-items:baseline}
+.official .hot .row .lbl{color:var(--ink-soft)}
+.official .hot .num{font-family:"IBM Plex Mono",monospace; font-weight:500}
+
+/* ══════════ ТАБЛИЦІ ══════════ */
+.tbl{overflow-x:auto; -webkit-overflow-scrolling:touch}
+table{border-collapse:collapse; width:100%; min-width:520px; font-size:.83rem; line-height:1.45}
+th{
+  font-family:"IBM Plex Mono",monospace; font-size:.7rem; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--muted); text-align:left; font-weight:500;
+  white-space:nowrap;
+}
+th,td{padding:8px 14px 8px 0; border-bottom:1px solid var(--hair); vertical-align:top}
+th:last-child,td:last-child{padding-right:0}
+tbody tr:last-child td{border-bottom:none}
+td .badge{margin-top:2px}
+
+/* ══════════ СТРУКТУРА ГРУПИ ══════════ */
+.tally{display:flex; flex-wrap:wrap; align-items:stretch; gap:8px}
+.tally .cell{
+  flex:1 1 118px; background:var(--sunk); border-radius:4px; padding:10px 12px 11px;
+  display:flex; flex-direction:column; gap:2px;
+}
+.tally .cell.total{background:var(--accent-soft); box-shadow:inset 0 0 0 1px var(--accent)}
+.tally .n{font-family:"IBM Plex Mono",monospace; font-size:1.5rem; font-weight:500; line-height:1;
+  font-variant-numeric:tabular-nums; word-spacing:-.28em}
+.tally .k{font-size:.73rem; color:var(--muted); line-height:1.35}
+.tally .op{align-self:center; color:var(--muted); font-size:.9rem; flex:0 0 auto; padding:0 2px}
+@media (max-width:520px){.tally .op{display:none}}
+
+/* ══════════ СХЕМА ЗОНИ (grid, без абсолютних координат) ══════════ */
+.flowcap{display:flex; justify-content:space-between; gap:12px; font-family:"IBM Plex Mono",monospace;
+  font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.flow{display:grid; grid-template-columns:repeat(5,minmax(0,1fr));
+  column-gap:12px; position:relative}
+.flow::before{
+  content:""; position:absolute; left:6%; right:6%; top:9px; height:2px;
+  background:var(--hair); z-index:0;
+}
+/* Кожна станція — окрема колонка, задана явно; всередині простий flex.
+   Свідомо без subgrid: автопозиціювання рядків поводиться по-різному в різних
+   рушіях і сплющувало першу колонку. Вирівнювання фактів по одній лінії тримає
+   min-height у .nm — детерміновано всюди. */
+.station{
+  display:flex; flex-direction:column; gap:7px; grid-row:1;
+  position:relative; z-index:1; padding-bottom:2px;
+}
+.station:nth-child(1){grid-column:1}
+.station:nth-child(2){grid-column:2}
+.station:nth-child(3){grid-column:3}
+.station:nth-child(4){grid-column:4}
+.station:nth-child(5){grid-column:5}
+.station .pin{
+  width:20px; height:20px; border-radius:50%; background:var(--paper);
+  display:grid; place-items:center; flex:0 0 auto;
+}
+.station .pin i{width:11px; height:11px; border-radius:50%; display:block}
+.station.s-high .pin i{background:var(--high)}
+.station.s-mid  .pin i{background:var(--mid)}
+.station.s-key  .pin i{background:var(--low)}
+.station.s-key .pin{box-shadow:0 0 0 2px var(--low)}
+.station .nm{font-family:"Archivo",sans-serif; font-size:.85rem; font-weight:600; line-height:1.25;
+  min-height:2.5em}
+.station.s-key .nm{color:var(--low)}
+.station .fx{font-size:.76rem; color:var(--muted); line-height:1.45}
+@media (max-width:820px){
+  .flow{grid-template-columns:minmax(0,1fr); row-gap:0}
+  .flow::before{display:none}
+  .flowcap{display:none}
+  .station, .station:nth-child(n){
+    display:grid; grid-column:1; grid-row:auto;
+    grid-template-columns:20px minmax(0,1fr); grid-template-rows:auto auto;
+    column-gap:12px; row-gap:0; padding:0 0 14px; position:relative;
+  }
+  .station::after{content:""; position:absolute; left:9px; top:22px; bottom:0; width:2px; background:var(--hair)}
+  .station:last-child::after{display:none}
+  .station .pin{grid-column:1; grid-row:1}
+  .station .nm{grid-column:2; grid-row:1; align-self:center; min-height:0}
+  .station .fx{grid-column:2; grid-row:2; padding-top:4px}
+}
+.note{font-size:.75rem; color:var(--muted); line-height:1.45}
+
+/* ══════════ ЦИФРИ ══════════ */
+.figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(158px,1fr)); gap:1px;
+  background:var(--hair); border:1px solid var(--hair); border-radius:4px; overflow:hidden}
+.fig{background:var(--surface); padding:12px 14px 13px; display:flex; flex-direction:column; gap:3px}
+.fig .n{font-family:"IBM Plex Mono",monospace; font-size:1.35rem; font-weight:500; line-height:1.05;
+  font-variant-numeric:tabular-nums; word-spacing:-.28em}
+.fig .k{font-size:.75rem; color:var(--ink-soft); line-height:1.35}
+.fig .w{font-family:"IBM Plex Mono",monospace; font-size:.7rem; color:var(--muted); margin-top:2px}
+
+/* ══════════ ПРОТИРІЧЧЯ ══════════ */
+.clash{display:flex; flex-direction:column; gap:8px}
+.clash + .clash{margin-top:6px}
+.sides{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:8px}
+.side{background:var(--sunk); border-radius:4px; padding:10px 12px; font-size:.83rem; line-height:1.45}
+.side .who{font-family:"IBM Plex Mono",monospace; font-size:.7rem; letter-spacing:.06em;
+  text-transform:uppercase; color:var(--muted); margin-bottom:4px}
+.verdict{font-size:.82rem; line-height:1.5; padding-left:12px; border-left:2px solid var(--accent);
+  color:var(--ink-soft)}
+
+/* ══════════ СПИСКИ ══════════ */
+.todo{display:flex; flex-direction:column; gap:11px; margin:0; padding:0; list-style:none}
+.todo li{display:grid; grid-template-columns:auto minmax(0,1fr); column-gap:10px; font-size:.87rem; line-height:1.5}
+.todo li::before{content:"□"; color:var(--muted); font-size:.95rem; line-height:1.35}
+
+/* ══════════ ЛЕГЕНДА / ІСТОРІЯ / ПІДВАЛ ══════════ */
+.legend{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:.74rem; color:var(--muted); line-height:1.6}
+.legend span{display:inline-flex; align-items:baseline; gap:6px}
+.hist{display:flex; flex-direction:column; gap:0; margin:0; padding:0; list-style:none}
+.hist li{padding:11px 0; border-bottom:1px solid var(--hair); font-size:.84rem; line-height:1.5}
+.hist li:first-child{padding-top:0}
+.hist li:last-child{border-bottom:none}
+.hist time{display:block; font-family:"IBM Plex Mono",monospace; font-size:.71rem; color:var(--muted);
+  margin-bottom:3px}
+footer{
+  border-top:var(--rule) solid var(--ink); margin-top:32px; padding-top:16px;
+  display:grid; grid-template-columns:150px minmax(0,1fr) auto; column-gap:32px;
+  align-items:start;
+}
+footer .label{
+  grid-column:1; font-family:"IBM Plex Mono",monospace; font-size:.72rem;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--muted); line-height:1.45;
+}
+footer p{grid-column:2; font-size:.775rem; color:var(--muted); line-height:1.6; max-width:74ch}
+/* ─────── Лого-локап OLS ───────
+   Набраний розміткою за офіційним горизонтальним лок-апом з брендкіту
+   (svg/lockup-ua-h.svg). Брендбук прямо забороняє вставляти той SVG як <img>:
+   у ньому живий текст, і без Manrope він розсиплеться. Тому всі пропорції
+   перенесені в em від кегля знаку, як у вихідному файлі при кеглі 100:
+   трекінг .10em, точка 16/100 = .16em на базовій лінії, риса 61.5/100 заввишки,
+   зазори 46/100 з обох боків риси, дескриптор 46.15/100 з трекінгом .06em.
+   Кольори — фірмові, не токени сторінки: знак не перефарбовується під носій.
+   Дескриптор — малими літерами. Капс є лише у вертикальному лок-апі. */
+.lockup{
+  grid-column:3; grid-row:1 / span 2; justify-self:end; align-self:start; margin-top:6px;
+  --ols-znak:#1A1A18; --ols-krapka:#B0755A; --ols-rysa:#E7E6E2; --ols-desk:#55534E;
+  font-family:"Manrope",system-ui,sans-serif; font-size:24px;
+  display:flex; align-items:center;
+  text-decoration:none; transition:opacity .25s cubic-bezier(.4,0,.2,1);
+}
+.lockup:hover{opacity:.7}
+.lockup:focus-visible{outline:1px solid var(--ols-krapka); outline-offset:6px}
+.lockup .znak{
+  font-size:1em; font-weight:500; letter-spacing:.10em; line-height:1;
+  color:var(--ols-znak); white-space:nowrap;
+}
+.lockup .krapka{
+  display:inline-block; width:.16em; height:.16em; background:var(--ols-krapka);
+  border-radius:1px; vertical-align:baseline;
+}
+.lockup .rysa{
+  width:1px; height:.615em; background:var(--ols-rysa);
+  margin:0 .46em; flex:0 0 auto;
+}
+.lockup .desk{
+  font-size:.4615em; font-weight:400; letter-spacing:.06em; line-height:1;
+  color:var(--ols-desk); white-space:nowrap;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .lockup{
+    --ols-znak:#EDECE8; --ols-rysa:#2A2A26; --ols-desk:#A29E94;
+  }
+}
+:root[data-theme="dark"] .lockup{
+  --ols-znak:#EDECE8; --ols-rysa:#2A2A26; --ols-desk:#A29E94;
+}
+@media (prefers-reduced-motion:reduce){ .lockup{transition:none} }
+@media (max-width:780px){
+  footer{grid-template-columns:minmax(0,1fr); row-gap:8px}
+  footer .label{grid-column:1; padding-bottom:6px}
+  footer p{grid-column:1}
+  .lockup{grid-column:1; grid-row:auto; justify-self:start; margin-top:22px}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<header class="masthead">
+  <div class="kicker">Расувагаді · Тімуре · повінь 26.08.2026</div>
+  <h1>Пошук у Непалі — статус</h1>
+  <p class="sub">Для родин громадян України, з якими обірвався зв'язок. Що змінилося за добу, що офіційно каже українська сторона і що робити далі. Кожне твердження має статус достовірності й посилання на першоджерело.</p>
+</header>
+
+<div class="statusbar">
+  <span class="when">
+    <span>Перевірено: <b class="mono" id="checked-at">03.09.2026 10:30 Київ · 13:15 Катманду</b></span>
+    <span>Далі: <b>20:00 Київ</b></span>
+  </span>
+  <nav aria-label="Розділи">
+    <a href="#pidtrymka">Якщо накриває</a>
+    <a href="#oficialno">Офіційно</a>
+    <a href="#ukrainci">Українці</a>
+    <a href="#scho-robyty">Що робити</a>
+    <a href="#zona">Зона</a>
+    <a href="#clash">Протиріччя</a>
+    <a href="#dzherela">Джерела</a>
+  </nav>
+</div>
+
+<!-- ─────────── СТАТУС ─────────── -->
+<section class="block" id="status">
+  <div class="label">Головне зараз</div>
+  <div class="body">
+    <p class="lede">Ніхто з громадян України, кого розшукують, не вийшов на зв'язок. Пошуково-рятувальні роботи офіційно тривають — тобто Непал досі шукає живих, а не тільки тіла. З 31.08 паралельно йде ДНК-впізнання, воно поширюється на іноземців; за офіційним строком зіставлення займає щонайменше місяць-півтора. Зона пошуку розширилась: тіла знаходять уже на території Індії, за сотні кілометрів вниз за течією.</p>
+    <ul class="facts">
+      <li><span class="badge b-ok">Підтв.</span><span>Ніхто зі зниклих українців не вийшов на зв'язок — заява МЗС 31.08, 15:17 Київ</span></li>
+      <li><span class="badge b-ok">Підтв.</span><span>Українців немає у списках загиблих, постраждалих та ідентифікованих — МЗС, 31.08</span></li>
+      <li><span class="badge b-ok">Підтв.</span><span>Консули посольства разом із почесним консулом особисто обходять лікарні й морги, шукаючи зниклих українців — Посольство України в Індії, 31.08</span></li>
+      <li><span class="badge b-ok">Підтв.</span><span>У районі КПП пошукові групи прочісують територію суцільно, ділянка за ділянкою. Знаходять особисті речі зниклих; кому саме вони належать, офіційно не повідомляють — МЗС, 31.08</span></li>
+      <li><span class="badge b-ok">Підтв.</span><span>Поліція Непалу опублікувала 911 записів із фото й описом для впізнання — це головний офіційний канал, і посольство Індії офіційно направило туди родини — Nepal Police, 02.09</span></li>
+      <li><span class="badge b-high">Висока</span><span>13 загиблих знайдено в річці Гандак у штаті Уттар-Прадеш (Індія); Індія передасть їх Непалу після експертизи — Onlinekhabar, 01.09</span></li>
+      <li><span class="badge b-ok">Підтв.</span><span>Операція переходить від первинного пошуку до розширеного наземного та глибокого; українців немає у списках загиблих і постраждалих — МЗС, 02.09</span></li>
+    </ul>
+    <p class="src"><a href="https://24tv.ua/povin-nepali-vidomo-shhos-pro-zniklih-ukrayintsiv_n3133027">24 Канал, 31.08 (заява МЗС)</a> · <a href="https://www.pravda.com.ua/news/2026/08/31/8051137/">Українська правда, 31.08</a> · <a href="https://lb.ua/world/2026/08/31/762664_nepali_rozpochali.html">LB.ua, 31.08 17:49 (повідомлення посольства)</a></p>
+  </div>
+</section>
+
+<!-- ─────────── ПЕРЕХІД НА ПІДТРИМКУ ─────────── -->
+<section class="block" id="pidtrymka">
+  <div class="label">Якщо накриває</div>
+  <div class="body">
+    <a class="support" href="https://chekayu.visich.online" target="_blank" rel="noopener">
+      <span class="txt">
+        <span class="t">я чекаю — сторінка для тих, хто чекає</span>
+        <span class="d">Читати таке важко, і від цього накриває. Там — як пережити цю добу, що робити з думками, які крутяться по колу, як говорити з рідними, куди звертатися і які лінії підтримки працюють. Без новин і без цифр.</span>
+      </span>
+      <span class="go">chekayu.visich.online →</span>
+    </a>
+  </div>
+</section>
+
+<!-- ─────────── ОФІЦІЙНО ВІД УКРАЇНИ ─────────── -->
+<section class="block" id="oficialno">
+  <div class="label">Офіційно<br>від України</div>
+  <div class="body">
+
+    <div class="official">
+      <div class="who">МЗС України · 2 вересня 2026</div>
+      <h3>Етап операції та доступ до зони</h3>
+      <ul class="pts">
+        <li><span>Операція переходить <b>від первинного пошуку й доступу до найбільш постраждалої території до розширеного наземного та глибокого пошуку</b>. Це формулювання самого МЗС; про перехід від пошуку живих до підняття тіл у ньому не йдеться.</span></li>
+        <li><span>Українців <b>немає у списках загиблих і постраждалих</b>.</span></li>
+        <li><span>Китайські наземні маршрути <b>вже доходять до основної зони удару</b> в районі пункту пропуску Ґ'їронг. Доступ важкої техніки досі обмежений через занесення ґрунтом.</span></li>
+        <li><span>Рятувальні групи забезпечують дронами.</span></li>
+        <li><span>Індійські та непальські військові працюють на об'єктах Chilime і Langtang — на момент заяви пройшли близько <b>185 метрів</b> тунелю.</span></li>
+      </ul>
+      <p class="src"><a href="https://lb.ua/society/2026/09/02/763108_rayoni_poveni_kordoni_nepalu.html">Повідомлення МЗС через LB.ua, 02.09 14:34</a> · <a href="https://mfa.gov.ua/">mfa.gov.ua</a></p>
+    </div>
+
+    <div class="official">
+      <div class="who">Посольство України в КНР · 1 вересня 2026</div>
+      <h3>Ситуація на китайському боці кордону</h3>
+      <ul class="pts">
+        <li><span>Китайська сторона підтвердила загибель <b>16 осіб</b>. За інформацією МЗС КНР, іноземних громадян серед ідентифікованих загиблих наразі немає.</span></li>
+        <li><span>Зниклими безвісти вважаються <b>546 осіб</b>, з них <b>261 іноземний громадянин</b>.</span></li>
+        <li><span>У постраждалому повіті Цзілун — це китайський бік переходу, де стоїть порт Ґ'їронг — <b>іноземних туристів не залишилося</b>. Інші райони Тибету працюють у штатному режимі.</span></li>
+        <li><span>Доступ до постраждалого району обмежений через складні й небезпечні умови пошуково-рятувальної операції.</span></li>
+        <li><span>Посольство продовжує робочий контакт із МЗС КНР та іншими компетентними органами, щоб уточнити інформацію щодо громадян України.</span></li>
+      </ul>
+
+      <div class="hot">
+        <span class="t">Гарячі лінії, оголошені урядом КНР для родичів зниклих іноземців — обслуговування англійською, цілодобово</span>
+        <span class="row"><span class="num">+86 891 681 7165</span></span>
+        <span class="row"><span class="num">+86 183 0802 6705</span></span>
+        <span class="t" style="margin-top:6px">Гаряча лінія Посольства України в КНР</span>
+        <span class="row"><span class="num">+86 137 0123 0647</span> <span class="lbl">·</span> <span class="num">consul_cn@mfa.gov.ua</span></span>
+      </div>
+
+      <p class="src"><a href="https://www.facebook.com/100064668582621/posts/1487598970072375/">Пост Посольства України в КНР, 01.09.2026</a> · <a href="https://china.mfa.gov.ua/">china.mfa.gov.ua</a></p>
+    </div>
+
+    <div class="official">
+      <div class="who">Посольство України в Індії · 31 серпня 2026, 17:49</div>
+      <h3>ДНК-ідентифікація та порядок для родичів</h3>
+      <ul class="pts">
+        <li><span>Від МЗС Непалу отримано інформацію про запуск ДНК-тестування для ідентифікації невпізнаних тіл; процедура поширюється на іноземних громадян.</span></li>
+        <li><span>Родичі першого ступеня можуть здати кров у Nepal Police Hospital у Катманду або в найближчому районному відділенні поліції, взявши <b>два фото паспортного розміру</b>.</span></li>
+        <li><span>Хто перебуває за межами Непалу — робить ДНК-профіль на місці й надсилає копію на офіційну електронну адресу поліції Непалу.</span></li>
+        <li><span>Представники посольства разом із почесним консулом <b>особисто відвідують лікарні й морги</b>, шукаючи зниклих українців.</span></li>
+        <li><span>Перелік зниклих українців складений <b>туристичними компаніями</b>, а не за прикордонним обліком Непалу — це уточнення самого МЗС.</span></li>
+      </ul>
+      <p class="src"><a href="https://lb.ua/world/2026/08/31/762664_nepali_rozpochali.html">Повідомлення посольства через LB.ua, 31.08 17:49</a> · <a href="https://india.mfa.gov.ua/news/onovlennya-shchodo-gromadyan-ukrayini-z-yakimi-vtracheno-zvyazok-u-nepali-vnaslidok-stihijnogo-liha">india.mfa.gov.ua</a></p>
+    </div>
+
+    <div class="official">
+      <div class="who">МЗС України · 31 серпня 2026, 15:17</div>
+      <h3>Статус пошуків громадян України</h3>
+      <ul class="pts">
+        <li><span>Ніхто зі зниклих українців <b>не вийшов на зв'язок</b>.</span></li>
+        <li><span>Українців <b>немає у списках загиблих, постраждалих та ідентифікованих</b>.</span></li>
+        <li><span>У районі пункту пропуску пошукові групи прочісують територію суцільно, ділянка за ділянкою; знаходять особисті речі зниклих, власників офіційно не називають.</span></li>
+        <li><span>За ініціативою посольства Інтерпол отримав від оператора останні зафіксовані координати телефонів зниклих.</span></li>
+        <li><span>Гаряча лінія МЗС: <b>+38 044 238 15 88</b>, консульська служба: <b>cons_or@mfa.gov.ua</b></span></li>
+      </ul>
+      <p class="src"><a href="https://24tv.ua/povin-nepali-vidomo-shhos-pro-zniklih-ukrayintsiv_n3133027">24 Канал, 31.08 15:17</a> · <a href="https://www.pravda.com.ua/news/2026/08/31/8051137/">Українська правда, 31.08 20:01</a> · <a href="https://nv.ua/ukr/world/countries/povin-u-nepali-64-ukrajinciv-znikli-bezvisti-interpol-otrimav-geolokacijiji-telefoniv-shcho-vidomo-50636781.html">NV, 29.08 (Інтерпол)</a></p>
+    </div>
+
+    <p class="note">Цей блок — тільки прямі повідомлення української сторони, без переказів медіа. Усе інше на сторінці — з позначкою достовірності й посиланням на першоджерело.</p>
+  </div>
+</section>
+
+<!-- ─────────── ДЕЛЬТА ─────────── -->
+<section class="block" id="delta">
+  <div class="label">Що змінилось<br>за 03.09</div>
+  <div class="body">
+    <ul class="delta">
+      <li><div class="txt">
+        <p><b>Виправлення до вчорашнього зрізу: заява МЗС за 2 вересня була, і я її пропустив.</b> Учора ввечері тут стояло, що нових заяв української сторони за добу немає. Це неправда: заява МЗС вийшла 2 вересня, о 14:34 за Києвом. Виправляю прямо, а не переписую тихцем. Її зміст — вище, в розділі «Офіційно від України»: операція переходить від первинного пошуку до розширеного наземного та глибокого; українців немає у списках загиблих і постраждалих; китайські наземні маршрути вже доходять до основної зони удару, але важка техніка досі не проходить через занесення ґрунтом; на Chilime і Langtang пройшли близько 185 метрів тунелю. <span class="badge b-ok">Підтв.</span></p>
+        <p class="src"><a href="https://lb.ua/society/2026/09/02/763108_rayoni_poveni_kordoni_nepalu.html">МЗС через LB.ua, 02.09 14:34</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Зіставлення ДНК займає щонайменше місяць-півтора.</b> Це сказав офіційно виконувач обов'язків інформаційного офіцера поліції Каскі Діпак Ріджал: «обробка в лабораторії та зіставлення зразків займе за поточних умов мінімум один — один з половиною місяці». Це не оцінка збоку, а строк від тих, хто цим займається. Знати його краще заздалегідь, ніж чекати відповіді щодня. <span class="badge b-ok">Підтв.</span></p>
+        <p><b>І чому фото не вирішує питання.</b> Одне тіло під номером 1003 заявили одразу три родини. В іншому випадку родина відкликала заяву, коли побачила, що в загиблого всі зуби на місці, а в їхньої людини кількох не було. Поліція визнає: публікація фотографій дала не стільки впізнання, скільки плутанину, і тепер у кожному спірному випадку призначають ДНК. <span class="badge b-ok">Підтв.</span></p>
+        <p class="src"><a href="https://english.nepalnews.com/s/nation/one-body-three-families-the-rasuwa-floods-identification-dilemma/">Nepalnews, 31.08 (поліція Каскі)</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Тунель Расувагаді пройшли до кінця — нікого не знайшли.</b> Секретаріат прем'єр-міністра Непалу повідомив 31 серпня, що група армії дійшла до найдальшої частини тунелю, обстежила його дронами й не виявила ознак присутності людей, після чого повернулася в Дунче. Це стосується одного конкретного тунелю, а не всіх. <span class="badge b-ok">Підтв.</span></p>
+        <p><b>Що тут не сходиться.</b> Зведення за 2 вересня далі описують роботи на цьому ж об'єкті на глибині близько 150 метрів із зупинкою перед скельними блоками. Найімовірніше, йдеться про різні тунелі або різні ділянки одного об'єкта, але з відкритих джерел це не встановлено. Тому висновків із цього — ні в який бік — сторінка не робить. <span class="badge b-mid">Середня</span></p>
+        <p class="src"><a href="https://english.onlinekhabar.com/no-people-found-trapped-in-rasuwa-hydropower-tunnel-army-team-returns-to-dhunche.html">Onlinekhabar, 31.08 (Секретаріат прем'єра)</a> · <a href="https://myrepublica.nagariknetwork.com/news/army-team-returns-after-searching-rasuwagadhi-hydropower-tunnel-86-88.html">myRepublica, 31.08</a> · <a href="https://english.onlinekhabar.com/rasuwa-floods-how-is-work-being-carried-out-inside-the-tunnels.html">Onlinekhabar, 02.09</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Зведення NDRRMA на 03.09, 12:24 за Катманду:</b> знайдено 1 252, зниклими рахують 4 216, врятовано 11 993. По районах: Чітван 355, Навалпараси-Схід 218, Навалпараси-Захід 208, Нувакот 177, Расува 127, Ґоркха 69, Дхадінг 60, Танахун 38. <span class="badge b-ok">Підтв.</span></p>
+        <p><b>Окремо про цифру поранених.</b> У цьому ж зведенні стоїть 5 135 поранених, тоді як добою раніше — 292. Таке зростання за добу означає зміну того, кого рахують, а не стільки нових поранених. Поки методика не пояснена, сторінка цю цифру не наводить як показник. <span class="badge b-mid">Середня</span></p>
+        <p class="src"><a href="https://english.onlinekhabar.com/rasuwa-flood-1252-bodies-recovered-4216-still-missing.html">Onlinekhabar, 03.09 12:24 KTM (зведення NDRRMA)</a> · <a href="https://english.onlinekhabar.com/bhotekoshi-flood-death-toll-4.html">те саме зведення за 02.09</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Більшість знайдених у Расуві — саме в районі Тімуре.</b> За районним зведенням поліції, у Расуві знайшли 133 загиблих: 104 з них у районі Тімуре — це і є пункт пропуску, — 18 у Сябрубесі й Ронзі, 11 у Бетраваті. Тімуре стало основною точкою пошуку в цьому районі. <span class="badge b-ok">Підтв.</span></p>
+        <p><b>І практичне з цього: знайдених у Тімуре вивозять у Бідур.</b> Заступник начальника поліції району Ашок Тапа повідомив, що всіх знайдених перевозять вертольотами в Бідур — це центр району Нувакот — через стан тіл. Тобто впізнання тих, кого знайшли на переході, відбувається не в Расуві, а в Нувакоті. Для родини це означає конкретне місце, яке треба називати в запитах, і конкретний район, чиї списки має сенс перевіряти. <span class="badge b-ok">Підтв.</span></p>
+        <p class="src"><a href="https://english.onlinekhabar.com/bodies-bhotekoshi-flood-rasuwa.html">Onlinekhabar, 02.09 (зведення поліції Расуви)</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Тунелі: що саме відбувається на кожному з шести напрямків.</b> Станом на день 02.09 роботи йдуть паралельно. На <b>Расувагаді</b> пройшли близько 150 метрів і зупинилися перед великими скельними блоками; роботи відновлюють. На <b>Langtang</b> об'єднана команда з 25 людей, серед них іноземні рятувальники, зайшла приблизно так само глибоко. На <b>Chilime</b> працюють іноземні й непальські рятувальники. На <b>Upper Trishuli 1</b> команда армії Непалу шукає в Хаку. На <b>Trishuli-3A</b> — 93 людини, три екскаватори й малий навантажувач: після компресорів, відбійників і керованих підривів знайшли вихід тунелю й відкачують приблизно півтора метра води, що набралася за ніч. На <b>Trishuli-3B</b> — 61 людина, знайшли офіс проєкту й житлову зону, будують під'їзд екскаватором. Тунелі описують як дуже небезпечні й важкодоступні. Про знайдених у самих тунелях у цьому зведенні не повідомляють. <span class="badge b-high">Висока</span></p>
+        <p class="src"><a href="https://english.onlinekhabar.com/rasuwa-floods-how-is-work-being-carried-out-inside-the-tunnels.html">Onlinekhabar, 02.09 13:39 KTM</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Нових заяв української сторони за 02.09 так і не з'явилося.</b> Перевірено ще раз станом на вечір: тематична лента Укрінформу, Українська правда, LB.ua, ТСН, УНІАН — усе, що показує пошук за цю добу, датоване 27–31 серпня. Останні офіційні дані української сторони лишаються ті самі: Посольство України в КНР від 01.09 і МЗС від 31.08. Це не означає, що робота не йде — консульська група в Непалі, — але публічних оновлень за добу немає. <span class="badge b-ok">Підтв.</span></p>
+        <p class="src"><a href="https://www.ukrinform.ua/tag-nepal">Укрінформ, тема «Непал»</a> · <a href="https://www.pravda.com.ua/news/2026/08/31/8051137/">УП, 31.08</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Збіг фотографії — це ще не впізнання.</b> У Покхарі за 02.09 впізнали й повернули родинам 21 людину. Під час цієї роботи виявилось, що на фотографії окремих загиблих претендувала більш ніж одна родина — і такі випадки відправили на ДНК. Це найважливіше практичне з усього за сьогодні: база фото поліції Непалу дає підставу поставити питання, але підтвердженням є тільки ДНК. Ще п'ятьох залишили до результатів аналізу, не поховавши. <span class="badge b-ok">Підтв.</span></p>
+        <p><b>Тих, кого поки не впізнали, ховають у позначених могилах.</b> У Покхарі так поховали 81 людину — у могилах із позначками і зі збереженим зразком ДНК. Це зроблено саме для того, щоб після збігу людину можна було знайти й повернути родині: поховання тут не закриває питання. Тих, кого привезли до Покхари, знайшли в Дхадінгу, Ґоркхі, Навалпарасі й Танахуні. Про громадян інших країн серед упізнаних цього дня офіційно не повідомляли — тобто ні підтвердження, ні заперечення тут немає. <span class="badge b-ok">Підтв.</span></p>
+        <p class="src"><a href="https://myrepublica.nagariknetwork.com/news/21-bodies-from-bhotekoshi-flood-identified-in-pokhara-45-88.html">myRepublica, 02.09 (Кaski, помічник голови адміністрації Чітранґад Барал)</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Поліція Непалу опублікувала точний порядок ДНК — і повний перелік документів для тих, хто за кордоном.</b> Родич першого ступеня — батько, мати, син або донька — робить ДНК-профіль в акредитованій лабораторії у своїй країні й надсилає копію на офіційну адресу поліції Непалу. До профілю треба додати: повне ім'я зниклої людини, громадянство, паспортні дані, дату й місце зникнення, сам звіт лабораторії та документ про родинний зв'язок донора. Хто в Непалі — здає кров у патологічній лабораторії Nepal Police Hospital у Махараджґунджі в Катманду або в найближчому районному відділенні поліції, з двома фото паспортного розміру. Контактна особа — інспектор Самбху Бахадур КЦ, +977 984-1616095. Дедлайну не оголошували. <span class="badge b-ok">Підтв.</span></p>
+        <p class="src"><a href="https://english.nepalnews.com/s/security/nepal-police-seeks-dna-samples-to-identify-bodies-recovered-after-rasuwa-flood/">Nepalnews, 31.08 (звернення поліції Непалу)</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>У медіа з'явилось слово «recovery» — офіційно статус операції не змінювали.</b> Частина міжнародних медіа з 29.08 описує операцію як перехід від пошуку живих до підняття тіл. Це редакційне формулювання, а не заява влади Непалу: офіційного оголошення про зміну статусу не було, і в зведеннях операція й далі проходить як пошуково-рятувальна. Різницю тримаємо явно, бо саме на цьому легко зробити висновок, якого джерела не робили. <span class="badge b-high">Висока</span></p>
+        <p class="src"><a href="https://www.cnn.com/2026/08/29/world/video/rescue-missions-turn-to-search-and-recovery-nepal-digvid-vrtc">CNN, 29.08 — приклад медійного формулювання</a> · <a href="https://kathmandupost.com/national/2026/09/02/nepal-rescue-teams-race-to-reach-workers-feared-trapped-in-hydropower-tunnels">Kathmandu Post, 02.09 — операція як пошуково-рятувальна</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Нових заяв української сторони за 02.09 немає.</b> Перевірено ленту Укрінформу за темою «Непал» — останній матеріал 01.09 10:08, нових повідомлень МЗС і посольств немає. Останні офіційні дані української сторони — Посольство в КНР 01.09 і МЗС 31.08. Українців у нових даних по знайдених, ідентифікованих і переданих родичам не з'явилося. <span class="badge b-ok">Підтв.</span></p>
+        <p class="src"><a href="https://www.ukrinform.ua/tag-nepal">Укрінформ, тема «Непал»</a> · <a href="https://www.facebook.com/100064668582621/posts/1487598970072375/">Посольство України в КНР, 01.09</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Перший урядовий ситуаційний звіт: постраждали близько 1,6 млн людей.</b> NDRRMA — це державне агентство Непалу з управління катастрофами — оприлюднило перший офіційний звіт про наслідки. Найважче постраждали Расува й Нувакот, помірно — Дхадінг, Ґоркха, Чітван. Знищено 41 бетонний мост, ще чотири пошкоджені; в Нувакоті повністю зруйновано 1 267 будинків. У двох гірських громадах Расуви 3 702 домогосподарства — 14 461 людина — досі без дороги, електрики та зв'язку. Пошкоджено 188 телекомунікаційних вишок, і це пряме пояснення, чому зв'язок у зоні не відновлюється. <span class="badge b-ok">Підтв.</span></p>
+        <p><b>Найважливіше в цьому звіті — не цифри, а склад зниклих.</b> За розбивкою NDRRMA, серед зниклих 62% — непальці та внутрішні туристи, 17% — державні службовці, 15% — іноземні громадяни. Тобто іноземці — це приблизно кожен сьомий у переліку зниклих, і саме тому процедури для іноземців (ДНК, база фото, порядок повернення тіл) винесені окремо. <span class="badge b-ok">Підтв.</span></p>
+        <p class="src"><a href="https://english.onlinekhabar.com/bhotekoshi-floods-damage.html">Onlinekhabar, 01.09 20:37 KTM (звіт NDRRMA)</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Тунелі: як саме йдуть роботи.</b> Одночасно працюють на чотирьох напрямках — Расувагаді, Langtang, Chilime і каскад Upper Trishuli 1 / 3A / 3B. Прохід розбирають екскаваторами й малою технікою, скельні перепони проходять керованими підривами, воду з тунелів відкачують насосами. На Расувагаді пройшли близько 150 метрів і зупинилися перед великими скельними блоками; на Langtang команда з 25 людей, серед них іноземні рятувальники, зайшла приблизно так само глибоко. Паралельно територію обходять пішими групами. Про виведених живими або підняті з тунелів тіла в цьому звіті не повідомляють. <span class="badge b-high">Висока</span></p>
+        <p class="src"><a href="https://kathmandupost.com/national/2026/09/02/nepal-rescue-teams-race-to-reach-workers-feared-trapped-in-hydropower-tunnels">Kathmandu Post, 02.09</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Записи імміграції: перша документована хронологія останніх хвилин на переході.</b> BBC отримала електронні записи пункту імміграції Расувагаді за ранок 26.08. Того ранку 89 громадян Непалу та іноземців пройшли оформлення на вихід із Непалу в Тибет, ще четверо оформилися на вхід. Остання транзакція зафіксована о <b>8:35:03</b> за часом Непалу. Серед тих, хто виїжджав того ранку, — 32 громадяни Індії, 12 Китаю, дев'ять США, а також громадяни Британії, Канади, Австралії та Італії. Чотири співробітники імміграції зникли, зокрема керівник пункту — його тіло знайшли значно нижче за течією; співробітниця, яка вносила останні записи, досі зникла. <span class="badge b-high">Висока</span></p>
+        <p><b>Час 8:35 підтверджується незалежно.</b> За чотири дні до публікації BBC родина одного з громадян США розповіла CBS, що отримала підтвердження: візу на пункті пропуску йому оформили о 8:35 ранку за місцевим часом. Це інше джерело, інший канал і та сама хвилина. <span class="badge b-ok">Підтв.</span></p>
+        <p><b>Що ці записи означають і чого не означають.</b> Вони фіксують момент оформлення документів — не місце людини далі. Від пункту імміграції до Моста дружби, яким переходять кордон, близько 2 км, і сам оформлений перехід займає, за словами співробітника пункту, 15–20 хвилин пішки. Тому оформлені того ранку могли бути в дорозі до моста, могли чекати в базарі Ґхатте-Кхола біля пункту, могли готуватися до переходу. Про конкретну людину записи не говорять нічого — і ця сторінка таких висновків не робить. Сам співробітник імміграції, який вижив (того дня він поїхав у Катманду складати екзамен), окремо наголошує: електронні записи фіксують лише частину того, що відбувалося. <span class="badge b-high">Висока</span></p>
+        <p><b>Одна цифра з тієї ж статті, яку ми не беремо за факт.</b> Той самий співробітник наводить власну оцінку — що в зоні повені могло бути 2 000–2 500 людей. Це оцінка однієї людини, а не облік: офіційно NDRRMA прямо каже, що точної кількості зниклих досі не знає. Тримаємо як оцінку, не як дані. <span class="badge b-mid">Середня</span></p>
+        <p class="src"><a href="https://www.bbc.com/news/articles/c0qxw1qw3g7o">BBC, 01.09 — Соутік Бісвас і Фаніндра Дахал (BBC Nepali)</a> · <a href="https://www.yerepouni-news.com/the-final-minutes-before-floodwater-crashed-through-nepal-china-border/">повний перепублікований текст тієї ж статті</a> · <a href="https://www.cbsnews.com/news/nepal-flood-american-man-missing-family-desperate-for-info/">CBS News, 28.08 — незалежне підтвердження часу 8:35</a> · <a href="https://english.onlinekhabar.com/exact-number-of-people-missing-in-rasuwa-floods-still-unclear-authority.html">NDRRMA про точність обліку, 31.08</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Загиблих знаходять уже на території Індії.</b> З річки Гандак у районі Кушінагар (штат Уттар-Прадеш) знайшли 13 людей, яких поки не впізнали — шість чоловіків і сім жінок; їх пов'язують із повіддю на Бхоте-Коші. Індійська адміністрація відкрила окремий пункт для громадян Непалу, які шукають рідних, і координується з Непалом через МЗС Індії; їх передадуть Непалу після експертизи, і вже там почнеться впізнання. У зведенні поліції Непалу за 02.09 дев'ять тіл рахуються як знайдені в Індії. <span class="badge b-ok">Підтв.</span></p>
+        <p class="src"><a href="https://english.onlinekhabar.com/bodies-india-bhotekoshi.html">Onlinekhabar, 01.09</a> · <a href="https://kathmandupost.com/national/2026/09/02/nepal-flood-death-toll-rises-to-1-127-as-4-858-remain-missing">Kathmandu Post, 02.09 07:39 (зведення поліції Непалу)</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Зведення поліції Непалу на ранок 02.09.</b> Знайдено 1 127 тіл, експертизу й опис завершено для 1 113. Родичам передано 95 тіл — за добу було 58. На сайті поліції опубліковано 911 записів із фото й описом — для впізнання. Знайдені тіла розподілені по восьми районах Непалу і в Індії: найбільше в Чітвані (348), далі Навалпараси-Схід (217) і Навалпараси-Захід (190), Нувакот (155), Ґоркха (66), Дхадінг (59), Расува (45), Танахун (38), Індія (9). Українців серед переданих родичам немає. <span class="badge b-ok">Підтв.</span></p>
+        <p class="src"><a href="https://kathmandupost.com/national/2026/09/02/nepal-flood-death-toll-rises-to-1-127-as-4-858-remain-missing">Kathmandu Post, 02.09 07:39</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>У переліку врятованих іноземців за громадянствами України немає.</b> Із 315 врятованих іноземців Непал назвав розподіл: 187 громадян Індії, 108 Китаю, по чотири Мальти й Німеччини, по двоє Росії, Туреччини, США та Італії. України в цьому переліку немає. Це не інформація про конкретну людину — це означає тільки те, що в опублікованому розподілі врятованих українців поки не зазначено. <span class="badge b-high">Висока</span></p>
+        <p class="src"><a href="https://english.nepalnews.com/s/main-left/nepal-news-evening-briefing-tuesday-september-01-2026/">Nepalnews, 01.09 (вечірнє зведення)</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Тунелі: розглядають буріння з поверхні.</b> Міністр внутрішніх справ Непалу заявив, що влада вивчає можливість бурити або копати з поверхні, щоб дійти до людей у тунелях ГЕС, і що уряд «не втратив надії». Це зміна підходу, а не повідомлення про результат: про виведених живими з тунелів досі не повідомляли. <span class="badge b-high">Висока</span></p>
+        <p class="src"><a href="https://english.nepalnews.com/s/main-left/nepal-news-evening-briefing-tuesday-september-01-2026/">Nepalnews, 01.09</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Нових заяв української сторони за ніч і ранок 02.09 немає.</b> Останнє — повідомлення Посольства України в КНР від 01.09 і заяви МЗС від 31.08. У новинній хвилі за 02.09 трапляються матеріали з цифрами «55» і «53» зниклих українців — це публікації від 27–29.08, які повертаються в пошук під свіжими датами; нових даних у них немає. <span class="badge b-ok">Підтв.</span></p>
+        <p class="src"><a href="https://www.facebook.com/100064668582621/posts/1487598970072375/">Посольство України в КНР, 01.09</a> · <a href="https://www.pravda.com.ua/news/2026/08/31/8051137/">УП, 31.08</a> · <a href="https://censor.net/ua/news/4020447/povin-u-nepali-55-ukrayintsiv-vvajayutsya-znyklymy">приклад старої публікації — Censor, 27.08 11:42</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Сьомий день тунельної операції: жодного успішного порятунку.</b> Армія Непалу відкрила приватним операторам ГЕС можливість вести роботи самостійно — попередня схема з єдиним командуванням виявилась неефективною. Без зв'язку близько 894 працівників на 12 пошкоджених об'єктах, з них приблизно 600 імовірно всередині тунелів. З тунелю Chilime винесли одного загиблого; за повідомленням, це не хтось із працівників цього об'єкта. Заважають три речі: багно й уламки, які керівник одного з проєктів назвав «океаном», великий валун, що перекрив доступ на Langtang, і повільне прибуття техніки в далекі точки. <span class="badge b-high">Висока</span></p>
+        <p class="src"><a href="https://english.onlinekhabar.com/hydropower-project-tunnel-rescue.html">Onlinekhabar, 01.09 21:16 KTM</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Уточнення щодо врятованих із тунелів.</b> Цифра «близько 300 врятованих», яка ходила раніше, стосується операцій на об'єктах ГЕС загалом у перші дні, а не порятунків із самих тунелів. Станом на вечір 01.09 із тунелів живими не вивели нікого. Це не погіршення ситуації, а уточнення того, що саме означала попередня цифра. <span class="badge b-high">Висока</span></p>
+        <p class="src"><a href="https://english.onlinekhabar.com/hydropower-project-tunnel-rescue.html">Onlinekhabar, 01.09</a> · <a href="https://abcnews.com/International/death-toll-tops-1000-after-nepal-flooding-search/story?id=136108774">ABC News, 01.09</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Нових заяв української сторони за вечір 01.09 немає.</b> Останнє — повідомлення Посольства України в КНР цього ж дня і заяви МЗС від 31.08. Українців у нових даних по знайдених та ідентифікованих не з'явилося. <span class="badge b-ok">Підтв.</span></p>
+        <p class="src"><a href="https://www.facebook.com/100064668582621/posts/1487598970072375/">Посольство України в КНР, 01.09</a> · <a href="https://www.pravda.com.ua/news/2026/08/31/8051137/">УП, 31.08</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Посольство України в КНР: у Цзілуні іноземних туристів не залишилося.</b> Це китайський бік переходу, де стоїть порт Ґ'їронг. Китайська сторона підтвердила 16 загиблих; за даними МЗС КНР, іноземців серед ідентифікованих загиблих немає. Зниклими рахують 546 осіб, з них 261 іноземець. Доступ до району обмежений. <span class="badge b-ok">Підтв.</span></p>
+        <p class="src"><a href="https://www.facebook.com/100064668582621/posts/1487598970072375/">Посольство України в КНР, 01.09</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Уряд КНР відкрив дві цілодобові гарячі лінії для родичів зниклих іноземців</b> — англійською: +86 891 681 7165 і +86 183 0802 6705. Гаряча лінія Посольства України в КНР: +86 137 0123 0647, consul_cn@mfa.gov.ua. <span class="badge b-ok">Підтв.</span></p>
+        <p class="src"><a href="https://www.facebook.com/100064668582621/posts/1487598970072375/">Посольство України в КНР, 01.09</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Почалась ДНК-ідентифікація невпізнаних загиблих, і вона поширюється на іноземців.</b> Посольство України в Індії: 31.08 МЗС Непалу передало інформацію про запуск ДНК-тестування. <span class="badge b-ok">Підтв.</span></p>
+        <p class="src"><a href="https://lb.ua/world/2026/08/31/762664_nepali_rozpochali.html">LB.ua, 31.08 17:49 (повідомлення посольства)</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Непал оприлюднив процедуру повернення тіл іноземців — дев'ять кроків.</b> Перші чотири робить непальська сторона: документи, фотофіксація, автопсія, встановлення причини смерті. Далі — формальна ідентифікація, відбір відбитків і ДНК, перевірка паспорта, узгодження з посольством, передача тіла. Для впізнання відкрито базу фотографій Nepal Police: <a href="https://udb.nepalpolice.gov.np">udb.nepalpolice.gov.np</a>. Там, де впізнання ще не відбулося, потрібне зіставлення ДНК із родичами першого ступеня; профіль надсилають на dnacodis@nepalpolice.gov.np, гаряча лінія +977 984-1616095. <span class="badge b-high">Висока</span></p>
+        <p class="src"><a href="https://english.onlinekhabar.com/foreign-flood-victims-bodies.html">Onlinekhabar, 01.09 14:02 KTM</a> · <a href="https://ianslive.in/nepal-issues-advisory-on-identification-of-remains-of-foreign-nationals-killed-in-flash-floods--20260901105846">IANS, 01.09</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Як здають ДНК родичі — офіційно.</b> Родичі першого ступеня можуть здати кров у Nepal Police Hospital у Катманду або в найближчому районному відділенні поліції, взявши два фото паспортного розміру. Хто за межами Непалу — робить ДНК-профіль на місці й надсилає копію на офіційну адресу поліції Непалу. <span class="badge b-ok">Підтв.</span></p>
+        <p class="src"><a href="https://lb.ua/world/2026/08/31/762664_nepali_rozpochali.html">Посольство України в Індії через LB.ua, 31.08</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Консули шукають особисто, а не за списками.</b> Представники посольства разом із почесним консулом самі обходять лікарні й місця, куди привозять знайдених, шукаючи громадян України. <span class="badge b-ok">Підтв.</span></p>
+        <p class="src"><a href="https://lb.ua/world/2026/08/31/762664_nepali_rozpochali.html">Посольство України в Індії через LB.ua, 31.08</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Кількість знайдених різко зросла.</b> Станом на 01.09, 14:00 за Катманду знайдено 1 058 загиблих; судово-медичну експертизу — вона й дає підставу для впізнання — завершено для 972; родинам повернули 58; 684 поховані до впізнання, і саме для них потрібне зіставлення ДНК. Зниклими рахують 3 916 осіб, серед них 583 іноземці. Врятовано загалом 11 884. <span class="badge b-ok">Підтв.</span></p>
+        <p class="src"><a href="https://english.onlinekhabar.com/rasuwa-1058-bodies-found.html">Onlinekhabar, 01.09 14:00 KTM</a> · <a href="https://english.nepalnews.com/s/nation/rasuwa-flood-death-toll-reaches-1003-at-least-11884-rescued/">Nepalnews, 01.09 13:00 KTM</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Українців у нових даних немає.</b> Ні серед переданих родичам, ні серед ідентифікованих, ні серед загиблих. Перелік тих, кого розшукують, не змінився. <span class="badge b-ok">Підтв.</span></p>
+        <p class="src"><a href="https://lb.ua/world/2026/08/31/762664_nepali_rozpochali.html">LB.ua, 31.08</a> · <a href="https://24tv.ua/povin-nepali-vidomo-shhos-pro-zniklih-ukrayintsiv_n3133027">24 Канал, 31.08</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Масштаб залучених сил.</b> 21 314 силовиків; армія виконала 592 вертолітні рейси на пошук і евакуацію. Поранених 279, з них 168 уже виписані. <span class="badge b-high">Висока</span></p>
+        <p class="src"><a href="https://english.nepalnews.com/s/nation/rasuwa-flood-death-toll-reaches-1003-at-least-11884-rescued/">Nepalnews, 01.09</a></p>
+      </div></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ─────────── УКРАЇНЦІ ─────────── -->
+<section class="block" id="ukrainci">
+  <div class="label">Громадяни<br>України</div>
+  <div class="body">
+    <div class="focus">
+      <h2>Громадяни України</h2>
+      <p class="lede">Ніхто з тих, кого розшукують, не вийшов на зв'язок. Українців немає ні серед знайдених, ні серед госпіталізованих, ні серед загиблих чи ідентифікованих.</p>
+      <p class="muted">Це станом на останню перевірку. Ім'я, якого немає в опублікованих списках, не означає нічого про людину — воно означає тільки те, що списки поки його не містять. Персональних даних зниклих ця сторінка не публікує: імена й фотографії передані пошуковим групам, поліції Непалу та посольствам, і поширювати їх публічно — рішення кожної родини окремо.</p>
+
+      <h3>Перевірка опублікованих списків — відсутність теж дані</h3>
+      <div class="tbl"><table>
+        <thead><tr><th scope="col">Список</th><th scope="col">Станом на</th><th scope="col">Українці</th><th scope="col">Джерело</th></tr></thead>
+        <tbody>
+          <tr><td>Врятовані іноземці, евакуйовані повітрям — 216 осіб</td><td class="mono">30.08 07:00 KTM</td><td>Немає <span class="badge b-ok">Підтв.</span></td><td><a href="https://kathmandupost.com/national/2026/08/30/nepali-army-rescues-2-697-people-from-flood-hit-rasuwa">Kathmandu Post</a></td></tr>
+          <tr><td>Загиблі та постраждалі</td><td class="mono">31.08</td><td>Немає <span class="badge b-ok">Підтв.</span></td><td><a href="https://24tv.ua/povin-nepali-vidomo-shhos-pro-zniklih-ukrayintsiv_n3133027">МЗС / 24 Канал</a></td></tr>
+          <tr><td>Ті, хто вийшов на зв'язок</td><td class="mono">31.08 15:17 Київ</td><td>Ніхто <span class="badge b-ok">Підтв.</span></td><td><a href="https://24tv.ua/povin-nepali-vidomo-shhos-pro-zniklih-ukrayintsiv_n3133027">МЗС / 24 Канал</a></td></tr>
+          <tr><td>Повернуті родинам — 95 із 1 127 знайдених</td><td class="mono">02.09 07:39 KTM</td><td>Немає <span class="badge b-ok">Підтв.</span></td><td><a href="https://kathmandupost.com/national/2026/09/02/nepal-flood-death-toll-rises-to-1-127-as-4-858-remain-missing">Kathmandu Post / поліція Непалу</a></td></tr>
+          <tr><td>Ідентифіковані загиблі на китайському боці</td><td class="mono">01.09</td><td>Іноземців немає <span class="badge b-ok">Підтв.</span></td><td><a href="https://www.facebook.com/100064668582621/posts/1487598970072375/">Посольство в КНР</a></td></tr>
+          <tr><td>База фото для впізнання, Nepal Police — 911 записів</td><td class="mono">02.09</td><td>Офіційний канал впізнання; переглядати треба самому</td><td><a href="https://udb.nepalpolice.gov.np/disaster">udb.nepalpolice.gov.np</a></td></tr>
+          <tr><td>Врятовані іноземці за громадянствами — 315 осіб</td><td class="mono">01.09 KTM</td><td>України в переліку немає <span class="badge b-high">Висока</span></td><td><a href="https://english.nepalnews.com/s/main-left/nepal-news-evening-briefing-tuesday-september-01-2026/">Nepalnews</a></td></tr>
+          <tr><td>Знайдені в Індії, поки не впізнані — 13 людей, річка Гандак</td><td class="mono">01.09</td><td>Ідентифікація ще не починалась <span class="badge b-ok">Підтв.</span></td><td><a href="https://english.onlinekhabar.com/bodies-india-bhotekoshi.html">Onlinekhabar</a></td></tr>
+          <tr><td>Іменний список зниклих іноземців — 473 особи</td><td class="mono">28.08</td><td>Автоматично не зчитується <span class="badge b-mid">Вручну</span></td><td><a href="https://nepyork.com/2026/08/28/121-foreigners-rescued-473-still-missing-in-nepal-floods-full-name-list-by-nationality/">NEPYORK</a></td></tr>
+        </tbody>
+      </table></div>
+
+      <p class="verdict">Конкретної кількості ця сторінка не наводить свідомо. Офіційна цифра змінювалася кілька разів за перший тиждень і, за уточненням самого МЗС, складена туристичними компаніями — тобто це облік операторів поїздок, а не прикордонний облік Непалу. Такий перелік точний щодо тих, хто купив тур, але міг когось не врахувати. За структурою МЗС це дві туристичні групи та окремо громадянка у складі іноземної групи.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── ЩО РОБИТИ ─────────── -->
+<section class="block" id="scho-robyty">
+  <div class="label">Що робити<br>родині</div>
+  <div class="body">
+    <p>Порядок, зібраний з офіційних повідомлень МЗС України, посольств в Індії та КНР і поліції Непалу. Кроки не залежать один від одного — робити можна паралельно.</p>
+
+    <ol class="steps">
+      <li><div class="st-body">
+        <h3>Стати на облік у МЗС, якщо цього ще не зробили</h3>
+        <p>Дзвінок на гарячу лінію або лист у консульську службу. Проси реєстраційний номер звернення — без нього кожна наступна розмова починається з нуля. Уточни, чи людина вже в переліку зниклих: його складали оператори поїздок, тому когось могло в ньому не бути.</p>
+      </div></li>
+
+      <li><div class="st-body">
+        <h3>Передати фото й прикмети пошуковим групам</h3>
+        <p>Через посольство. Практика по цій операції: актуальне фото обличчя, а також фотографії татуювань, шрамів, манікюру, украшень і деталей одягу. Це те, за чим людину впізнають найшвидше.</p>
+      </div></li>
+
+      <li><div class="st-body">
+        <h3>Переглянути базу фото для впізнання</h3>
+        <p>Поліція Непалу відкрила її 1 вересня — це головний офіційний канал впізнання. Станом на 2 вересня там 911 записів: фото й опис кожного, кого поки не впізнали. Кількість зростає щодня, тому один перегляд не закриває питання — має сенс повертатися. Це фотографії загиблих, і дивитись їх важко. Рішення — тільки твоє, поспішати нікуди, і краще не наодинці.</p>
+        <p><b>Збіг на фото — підстава для запиту, а не впізнання.</b> Одне тіло під номером 1003 заявили три родини одночасно; в іншому випадку родина відкликала заяву, побачивши, що зуби не збігаються. Поліція визнає, що публікація фото дала не стільки впізнання, скільки плутанину, і тепер у кожному спірному випадку призначає ДНК. Тому послідовність така: побачив можливий збіг — фіксуєш номер запису, повідомляєш консульській групі й поліції Непалу, і далі питання вирішує аналіз, а не око.</p>
+      <p>Що це офіційний і робочий шлях, підтверджує чужий приклад: посольство Індії в Катманду 29 серпня публічно направило свої родини саме до цієї бази і паралельно — надсилати ДНК-профілі. Тобто це не обхідний варіант, а те, як ідентифікація влаштована для іноземців узагалі.</p>
+        <p class="src"><a href="https://udb.nepalpolice.gov.np/disaster">udb.nepalpolice.gov.np/disaster</a> · <a href="https://www.indembkathmandu.gov.in/media-detail/959">рекомендація посольства Індії в Непалі, 29.08</a></p>
+      </div></li>
+
+      <li><div class="st-body">
+        <h3>Підготувати ДНК для зіставлення</h3>
+        <p>З 31 серпня Непал проводить ДНК-ідентифікацію невпізнаних загиблих, процедура поширюється на іноземців. Родичі першого ступеня — батьки, діти, брати й сестри — здають кров у Nepal Police Hospital у Катманду або в найближчому районному відділенні поліції, взявши два фото паспортного розміру. Хто за межами Непалу — робить ДНК-профіль в акредитованій лабораторії у своїй країні й надсилає копію на офіційну адресу поліції Непалу.</p>
+        <p><b>Скільки це триває.</b> Поліція Каскі назвала строк прямо: обробка в лабораторії та зіставлення зразків займуть за поточних умов мінімум місяць-півтора. Це означає, що зразок має сенс здати якомога раніше, і що відсутність відповіді протягом тижнів — це не бездіяльність, а нормальний хід процедури.</p>
+        <p><b>Що саме додати до профілю, за переліком самої поліції Непалу:</b> повне ім'я зниклої людини, громадянство, паспортні дані, дату й місце зникнення, звіт лабораторії та документ, який підтверджує родинний зв'язок донора. Контактна особа — інспектор Самбху Бахадур КЦ, +977 984-1616095. Дедлайну не оголошували. Лабораторія в Непалі — патологічна лабораторія Nepal Police Hospital, Махараджґундж, Катманду.</p>
+        <p class="src"><a href="https://english.nepalnews.com/s/security/nepal-police-seeks-dna-samples-to-identify-bodies-recovered-after-rasuwa-flood/">Nepalnews, 31.08 — звернення поліції Непалу з переліком</a></p>
+        <p><b>Якщо родичів першого ступеня немає.</b> Опублікована процедура такий випадок не описує. Це не тупик, але й не вирішується само: питання, який зразок приймуть — особисті речі з біоматеріалом, ДНК дальших родичів — треба ставити консульській групі й поліції Непалу зараз, а не тоді, коли він знадобиться.</p>
+      </div></li>
+
+      <li><div class="st-body">
+        <h3>Знати порядок повернення тіла</h3>
+        <p>Непал оприлюднив процедуру з дев'яти кроків. Перші чотири робить непальська сторона: документи, фотофіксація, автопсія, встановлення причини смерті. Далі — формальна ідентифікація, відбір відбитків і ДНК, перевірка паспорта, узгодження з посольством, передача тіла. Знати це заздалегідь означає не втрачати днів на з'ясування, що буде далі.</p>
+        <p><b>Поховання до впізнання не закриває питання.</b> Тих, кого поки не впізнали, ховають у могилах із позначками і зі збереженим зразком ДНК — саме для того, щоб після збігу людину можна було знайти й повернути родині. У Покхарі так поховали 81 людину. Це не остаточний етап, а спосіб зберегти можливість впізнання на потім.</p>
+        <p><b>Знайдених на переході вивозять у Нувакот.</b> Тих, кого знаходять у районі Тімуре, перевозять вертольотами в Бідур — це адміністративний центр району Нувакот. Тому в запитах має сенс називати обидва місця: Тімуре як місце пошуку і Нувакот як місце, де далі відбувається оформлення й впізнання.</p>
+        <p><b>Пошук уже не тільки в Непалі.</b> Тіла виносить далеко вниз за течією — станом на 2 вересня їх знаходять у восьми районах Непалу і в Індії, у річці Гандак у штаті Уттар-Прадеш. Індійська адміністрація відкрила там окремий пункт для тих, хто шукає рідних, і передає тіла Непалу через МЗС Індії. Практичний висновок: питання про людину має бути поставлене не лише непальській стороні, а й через посольство України в Індії, яке веде Непал.</p>
+        <p class="src"><a href="https://english.onlinekhabar.com/foreign-flood-victims-bodies.html">Onlinekhabar, 01.09 — процедура</a> · <a href="https://english.onlinekhabar.com/bodies-india-bhotekoshi.html">Onlinekhabar, 01.09 — тіла в Індії</a> · <a href="https://kathmandupost.com/national/2026/09/02/nepal-flood-death-toll-rises-to-1-127-as-4-858-remain-missing">Kathmandu Post, 02.09 — розподіл по районах</a></p>
+      </div></li>
+
+      <li><div class="st-body">
+        <h3>Не залишати без уваги страхову й документи</h3>
+        <p>Якщо була туристична страховка — повідомити компанію й зафіксувати звернення. Зібрати документи, що підтверджують родинний зв'язок: вони знадобляться і для ДНК-процедури, і для будь-яких подальших дій. Якщо офіційного шлюбу чи оформленого родинного зв'язку немає, доказова база збирається окремо — і збирати її краще починати одразу.</p>
+      </div></li>
+    </ol>
+
+    <div class="contacts">
+      <span class="grp">Україна</span>
+      <span class="row"><span class="who">Гаряча лінія МЗС, цілодобово</span><span class="val">+38 044 238 15 88</span></span>
+      <span class="row"><span class="who">Консульська служба МЗС</span><span class="val">cons_or@mfa.gov.ua</span></span>
+      <span class="row"><span class="who">Посольство в Індії — веде Непал</span><span class="val">+91 11 2614 5093</span></span>
+      <span class="row"><span class="who">Посольство в КНР — веде тибетський бік</span><span class="val">+86 137 0123 0647 · consul_cn@mfa.gov.ua</span></span>
+
+      <span class="grp" style="margin-top:6px">Непал</span>
+      <span class="row"><span class="who">ДНК-профілі, поліція Непалу</span><span class="val">dnacodis@nepalpolice.gov.np</span></span>
+      <span class="row"><span class="who">Гаряча лінія поліції Непалу з ДНК</span><span class="val">+977 984-1616095</span></span>
+      <span class="row"><span class="who">Tourist Police — працює з іноземцями</span><span class="val">1144</span></span>
+      <span class="row"><span class="who">Nepal Police · Disaster helpline</span><span class="val">100 · 1234</span></span>
+
+      <span class="grp" style="margin-top:6px">Китай — для родичів зниклих іноземців, англійською, цілодобово</span>
+      <span class="row"><span class="who">Гарячі лінії уряду КНР</span><span class="val">+86 891 681 7165 · +86 183 0802 6705</span></span>
+    </div>
+
+    <p class="note">Телефони й адреси взяті з офіційних повідомлень МЗС України, посольств в Індії та КНР і поліції Непалу — джерела в розділі «Офіційно від України» та в джерельній базі.</p>
+  </div>
+</section>
+
+<!-- ─────────── ГРУПА ─────────── -->
+<section class="block" id="grupa">
+  <div class="label">Група<br>Блонської</div>
+  <div class="body">
+    <p>За структурою МЗС зниклі громадяни України — це дві туристичні групи та окремо одна громадянка, що подорожувала у складі іноземної групи. Одну з груп вів організатор поїздки, і саме її учасники були на пункті пропуску в момент повені.</p>
+    <p>Оцінки чисельності групи, які звучали в медіа, розходяться з офіційним обліком МЗС і належать третім особам, тому сторінка їх не повторює. Програма 11–26.08: Катманду → Лхаса → Шигацзе → Еверест → Манасаровар → кора навколо Кайлашу. Останній контакт з групою — близько 9:00 26.08 за Катманду, тобто ≈6:15 за Києвом; того дня група переходила кордон у Расувагаді.</p>
+    <p>Пошукові групи та влада отримали від українських дипустанов повну інформацію про всіх зниклих. Консульська група посольства в Індії працює в Непалі; посольства в Індії та КНР у цілодобовому контакті з місцевою владою й родинами. <span class="badge b-ok">Підтв.</span></p>
+    <p>У медіа Непалу група окремо не згадується — лише в українських. Новин про знайдених учасників немає.</p>
+    <p class="src"><a href="https://tsn.ua/svit/masshtabna-povin-u-nepali-55-ukrayintsiv-ne-vykhodiat-na-zviazok-sered-nykh-retryt-hrupa-blonskoyi-3157298.html">ТСН, 27.08</a> · <a href="https://www.pravda.com.ua/news/2026/08/31/8051137/">УП, 31.08</a> · <a href="https://www.unian.ua/incidents/nepal-kilkist-zniklih-bezvisti-ukrajinciv-zrosla-13481853.html">УНІАН, 27.08</a> · <a href="https://india.mfa.gov.ua/news/onovlennya-shchodo-gromadyan-ukrayini-z-yakimi-vtracheno-zvyazok-u-nepali-vnaslidok-stihijnogo-liha">Посольство України в Індії, 28.08</a></p>
+  </div>
+</section>
+
+<!-- ─────────── ЗОНА ─────────── -->
+<section class="block" id="zona">
+  <div class="label">Зона<br>пошуків</div>
+  <div class="body">
+    <div class="flowcap"><span>↑ витік · Тибет</span><span>вниз за течією · Непал ↓</span></div>
+    <div class="flow">
+      <div class="station s-high">
+        <span class="pin"><i></i></span>
+        <span class="nm">Нове озеро (Лхенде)</span>
+        <span class="fx">Площа з 27.08 впала на ~21 000 м², вода сходить природно; стан «керований».</span>
+      </div>
+      <div class="station s-mid">
+        <span class="pin"><i></i></span>
+        <span class="nm">Ґ'їронг-порт (КНР)</span>
+        <span class="fx">Рятувальники КНР на місці з 29.08, діставали живих з-під завалів. Доступ лише повітрям.</span>
+      </div>
+      <div class="station s-key">
+        <span class="pin"><i></i></span>
+        <span class="nm">КПП Расувагаді / Тімуре</span>
+        <span class="fx">Останні відомі дії групи — тут, ранок 26.08. Основна точка пошуку в районі: 104 зі 133 знайдених у Расуві — саме тут. Вивозять вертольотами в Бідур (Нувакот).</span>
+      </div>
+      <div class="station s-mid">
+        <span class="pin"><i></i></span>
+        <span class="nm">Сябрубесі · Дунче</span>
+        <span class="fx">Точки евакуації повітрям; звідси й з Тімуре вивезено 2 697 осіб станом на 30.08.</span>
+      </div>
+      <div class="station s-high">
+        <span class="pin"><i></i></span>
+        <span class="nm">Тунелі ГЕС Trishuli 3A / 3B</span>
+        <span class="fx">Живими з тунелів поки не вивели нікого; ~600 імовірно всередині. Розглядають буріння з поверхні.</span>
+      </div>
+    </div>
+    <h3>Геометрія переходу — що стало відомо з записів імміграції</h3>
+    <div class="tbl"><table>
+      <thead><tr><th scope="col">Точка</th><th scope="col">Відстань</th><th scope="col">Що там було</th></tr></thead>
+      <tbody>
+        <tr><td>Тімуре</td><td class="mono">—</td><td>Село на непальському боці, від якого відлічують решту</td></tr>
+        <tr><td>Базар Ґхатте-Кхола, пункт імміграції</td><td class="mono">~1,5 км на північ від Тімуре</td><td>50–60 будинків, готелі, місцевий бізнес і чотири офіси гідроенергетичних проєктів</td></tr>
+        <tr><td>Мост дружби — сам кордон</td><td class="mono">~2 км далі від пункту</td><td>15–20 хвилин пішки після оформлення документів</td></tr>
+      </tbody>
+    </table></div>
+    <p>Це важливо для розуміння записів імміграції: між оформленням документів і фактичним переходом кордону лежить дорога, і люди, оформлені того ранку, могли бути в різних її точках. Оформлення о 8:35 не означає, що людина була на мосту о 8:35.</p>
+    <p class="src"><a href="https://www.bbc.com/news/articles/c0qxw1qw3g7o">BBC, 01.09</a> · <a href="https://www.yerepouni-news.com/the-final-minutes-before-floodwater-crashed-through-nepal-china-border/">той самий текст, доступний машинно</a></p>
+    <p class="note">Схема логічна, не масштабна: послідовність точок вздовж річки від льодовика Лангтанг-Лірунг до каскаду ГЕС. Колір позначки — напруженість ділянки за останніми даними; червона — точка, де була група.</p>
+  </div>
+</section>
+
+<!-- ─────────── ЦИФРИ ─────────── -->
+<section class="block" id="cyfry">
+  <div class="label">Масштаб</div>
+  <div class="body">
+    <div class="figs">
+      <div class="fig"><span class="n">~600</span><span class="k">імовірно всередині тунелів ГЕС; без зв'язку 894 працівники на 12 обʼєктах</span><span class="w">Onlinekhabar · 01.09 21:16</span></div>
+      <div class="fig"><span class="n">1 252</span><span class="k">загиблих знайдено; зниклими рахують 4 216</span><span class="w">NDRRMA · 03.09 12:24</span></div>
+      <div class="fig"><span class="n">911</span><span class="k">записів із фото й описом опубліковано на сайті поліції Непалу — для впізнання</span><span class="w">Поліція Непалу · 02.09</span></div>
+      <div class="fig"><span class="n">869</span><span class="k">поховано, з них 438 поки не впізнані — у позначених могилах, зі збереженим ДНК</span><span class="w">Поліція Непалу · 02.09 08:00</span></div>
+      <div class="fig"><span class="n">95</span><span class="k">повернуто родинам; українців серед них немає</span><span class="w">Поліція Непалу · 02.09</span></div>
+      <div class="fig"><span class="n">1–1,5</span><span class="k">місяця — офіційний строк зіставлення ДНК за поточних умов</span><span class="w">Поліція Каскі · 31.08</span></div>
+      <div class="fig"><span class="n">104</span><span class="k">зі 133 знайдених у Расуві — у районі Тімуре, тобто на самому переході</span><span class="w">Поліція Расуви · 02.09</span></div>
+      <div class="fig"><span class="n">13</span><span class="k">загиблих знайдено вже в Індії, річка Гандак, штат Уттар-Прадеш — поки не впізнані</span><span class="w">Onlinekhabar · 01.09</span></div>
+      <div class="fig"><span class="n">~1,6 млн</span><span class="k">людей постраждали; зниклі за складом: 62% непальці, 17% держслужбовці, 15% іноземці</span><span class="w">NDRRMA · 01.09</span></div>
+      <div class="fig"><span class="n">21 314</span><span class="k">силовиків Непалу; 592 вертолітні рейси</span><span class="w">Nepalnews · 01.09</span></div>
+      <div class="fig"><span class="n">546</span><span class="k">зниклих у Ґ'їронгу (КНР), з них 261 іноземець</span><span class="w">CGTN · 30.08</span></div>
+    </div>
+    <p>Операцію ведуть армія Непалу, Nepal Police та APF; задіяно 13–15 гелікоптерів. Індія направила 18 офіцерів і криміналістичні команди — це стосується й процедури ідентифікації тіл. Стриманість Непалу щодо ширшої іноземної допомоги стала предметом публічної критики і впливає на темп операції.</p>
+    <p>Статус операції в офіційних формулюваннях — <b>search and rescue</b>, тобто пошук живих. Про перехід до <b>recovery</b> — коли метою стає вже тільки підняття й ідентифікація тіл — офіційно не оголошували. Те, що паралельно почалась ДНК-ідентифікація невпізнаних загиблих, статусу операції не змінює: це два процеси, які йдуть одночасно.</p>
+    <p class="src"><a href="https://www.abc.net.au/news/2026-09-01/search-for-hundreds-in-hydropower-tunnels-in-nepal/107100624">ABC, 01.09</a> · <a href="https://www.aljazeera.com/news/2026/8/31/nepal-tunnel-traps-hinder-flood-rescue-how-many-are-dead-or-missing">Al Jazeera, 31.08</a> · <a href="https://kathmandupost.com/national/2026/08/30/nepali-army-rescues-2-697-people-from-flood-hit-rasuwa">Kathmandu Post, 30.08</a> · <a href="https://www.npr.org/2026/08/31/nx-s1-5949971/nepals-hesitance-help-flood">NPR, 31.08</a></p>
+  </div>
+</section>
+
+<!-- ─────────── ПРОТИРІЧЧЯ ─────────── -->
+<section class="block" id="clash">
+  <div class="label">Протиріччя</div>
+  <div class="body">
+    <div class="clash">
+      <h3>Скільки зниклих українців — чому сторінка не наводить цифру</h3>
+      <div class="sides">
+        <div class="side"><div class="who">Що відбувалося з цифрою</div>За перший тиждень вона змінювалася кілька разів: спершу дані туристичної поліції Непалу, потім МЗС України, потім поліція Непалу назвала більше, і МЗС скорегувало — частина людей зареєструвалася на поїздку, але не поїхала</div>
+        <div class="side"><div class="who">Уточнення МЗС</div>Перелік складений туристичними компаніями, а не за прикордонним обліком Непалу</div>
+      </div>
+      <p class="verdict">Тому конкретне число тут не наводиться: воно не є остаточним обліком і легко перетворюється на арифметику, яка нічого не говорить про конкретну людину. Практичний висновок для родини протилежний: якщо є сумнів, чи людина в переліку — це треба уточнити в МЗС окремо, а не довіряти цифрі. <a href="https://nv.ua/ukr/world/countries/povin-u-nepali-64-ukrajinciv-znikli-bezvisti-interpol-otrimav-geolokacijiji-telefoniv-shcho-vidomo-50636781.html">NV, 29.08</a> · <a href="https://lb.ua/world/2026/08/31/762664_nepali_rozpochali.html">LB.ua, 31.08</a></p>
+    </div>
+
+    <div class="clash">
+      <h3>Коли саме вода дійшла до непальського боку переходу</h3>
+      <div class="sides">
+        <div class="side"><div class="who">BBC · 01.09</div>Остання транзакція імміграції — 8:35:03 за Непалом; потік з'явився на камері спостереження в Ґ'їронгу о 10:52 за Пекіном. 10:52 за Пекіном — це 8:37 за Катманду, тобто приблизно дві хвилини після останнього запису; сама BBC формулює це як «менш ніж десять хвилин»</div>
+        <div class="side"><div class="who">CBS News · 28.08</div>Родині одного з громадян США оформлення підтвердили о 8:35; за формулюванням CBS, потік накрив район «за 35 хвилин» після цього, тобто близько 9:10 за Катманду</div>
+      </div>
+      <p class="verdict">Точна хвилина, коли вода дійшла до непальського боку, з відкритих джерел не встановлена. Камера в Ґ'їронгу — це китайський бік і трохи інша точка на маршруті потоку, а «за 35 хвилин» у CBS — журналістське наближення, не зафіксований час. Різниця між двома версіями — близько півгодини, і будувати на жодній із них висновки про конкретну людину не можна. Що не суперечить: обидві версії лишають на дорогу від пункту імміграції до моста менше часу, ніж триває сам перехід, і саме тому записи імміграції не говорять, де хто був. <a href="https://www.bbc.com/news/articles/c0qxw1qw3g7o">BBC</a> · <a href="https://www.cbsnews.com/news/nepal-flood-american-man-missing-family-desperate-for-info/">CBS</a> · <a href="https://news.cgtn.com/news/2026-08-29/Animation-traces-path-of-Gyirong-debris-flow-1PZISAaXCww/p.html">CGTN про сім хвилин ходу потоку, 29.08 — кит. державне</a></p>
+    </div>
+
+    <div class="clash">
+      <h3>Скільки знайдено в Расуві — цифри зійшлися</h3>
+      <div class="sides">
+        <div class="side"><div class="who">Зведення поліції Непалу · 02.09</div>У розподілі по районах Расува — 41–45, Нувакот — 155</div>
+        <div class="side"><div class="who">Районне зведення поліції Расуви · 02.09</div>У Расуві знайдено 133, з них 104 в районі Тімуре</div>
+      </div>
+      <p class="verdict">Станом на 03.09 розходження закрилось само: у зведенні NDRRMA по Расуві стоїть уже 127 — майже те саме, що давало районне зведення. Тобто це були не різні дані, а різна швидкість: центральне зведення наздоганяло районне. Механізм такий: один підрахунок рахує, де людину знайшли, другий — де її оформили. Прямо на це вказує повідомлення самої районної поліції: знайдених вивозять вертольотами з Расуви в Бідур, центр Нувакоту. Тому в загальному зведенні вони й опиняються в графі Нувакоту. Практичний висновок від цього не залежить: запити щодо тих, кого знайшли на переході, треба адресувати в Нувакот. <a href="https://english.onlinekhabar.com/bodies-bhotekoshi-flood-rasuwa.html">Onlinekhabar, 02.09</a> · <a href="https://kathmandupost.com/national/2026/09/02/nepal-flood-death-toll-rises-to-1-127-as-4-858-remain-missing">Kathmandu Post, 02.09</a></p>
+    </div>
+
+    <div class="clash">
+      <h3>Звідки взялась цифра «близько 300 врятованих із тунелів»</h3>
+      <div class="sides">
+        <div class="side"><div class="who">Що було насправді · 27–28.08</div>Армія Непалу вивела 350 працівників із тунелю Upper Trishuli у перші дві доби після повені — це підтверджене повідомлення армії</div>
+        <div class="side"><div class="who">Як це почали переказувати</div>Цифру почали подавати як «врятовані з тунелів» узагалі, і вона трималась у переказах ще кілька днів</div>
+      </div>
+      <p class="verdict">Тому раніше на цій сторінці стояло «близько 300 врятовано з тунелів», і це було неточно: цифра стосувалась одного об'єкта й перших двох діб, а не операції в тунелях у цілому. Виправлено 01.09, і ось першоджерело, з якого вона пішла. <a href="https://english.nepalnews.com/s/nation/army-rescues-350-workers-trapped-in-upper-trishuli-hydropower-tunnel/">Nepalnews, 28.08 (армія Непалу)</a></p>
+    </div>
+
+    <div class="clash">
+      <h3>Скільки тіл знайдено — чому цифри в різних зведеннях різні</h3>
+      <div class="sides">
+        <div class="side"><div class="who">Nepalnews · 01.09 13:00 KTM</div>1 003 тіла</div>
+        <div class="side"><div class="who">Onlinekhabar · 01.09 14:00 KTM</div>1 058 — за методикою, що враховує й неповні останки</div>
+      </div>
+      <p class="verdict">Не суперечність, а різні зрізи й різна методика: цифра росте протягом дня, а частина зведень враховує й неповні останки (390 із 1 058 на 01.09), тому їхнє число вище за визначенням. Беремо пізніший зріз — на ранок 02.09 це 1 127 за даними поліції Непалу — тримаючи в голові, що методики різні. Те саме з іншими цифрами: у ситуаційному звіті NDRRMA за 01.09 стоїть 987 загиблих і 3 916 зниклих, у зведенні поліції за ранок 02.09 — 1 127 і 4 858; врятованих іноземців NDRRMA рахує 253, а вечірнє зведення 01.09 — 315. Це різні агенції з різними датами зрізу й різними джерелами обліку, а не спір про факт. Для оперативних чисел беремо поліцію, для картини наслідків — NDRRMA. І навіть у межах одного дня зведення розходяться: поліція за ранок 02.09 дає 1 127 і 1 118, NDRRMA за 10:50 того ж дня — 1 114 знайдених, 3 916 без вісті, 292 поранених і 11 993 врятованих. Різниця в кілька одиниць виникає, поки дані стікаються з восьми районів. Тому будь-яка цифра на цій сторінці — це зріз на вказаний час, а не остаточний облік. <a href="https://english.nepalnews.com/s/nation/rasuwa-flood-death-toll-reaches-1003-at-least-11884-rescued/">Nepalnews</a> · <a href="https://english.onlinekhabar.com/rasuwa-1058-bodies-found.html">Onlinekhabar</a></p>
+    </div>
+
+    <div class="clash">
+      <h3>Доступ до Ґ'їронг-порту</h3>
+      <div class="sides">
+        <div class="side"><div class="who">SCMP / CGTN · 29–30.08</div>рятувальники КНР дісталися зони порту, дістають живих</div>
+        <div class="side"><div class="who">ABC · 01.09</div>дорога до порту під 2–3 м води</div>
+      </div>
+      <p class="verdict">Не суперечність: доступ повітрям є, наземного коридору немає. <a href="https://www.scmp.com/news/china/politics/article/3365686/china-nepal-floods-rescuers-pull-2-survivors-out-rubble-near-tibet-border-crossing">SCMP, 29.08</a> · <a href="https://www.abc.net.au/news/2026-09-01/search-for-hundreds-in-hydropower-tunnels-in-nepal/107100624">ABC, 01.09</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── РУЧНА ПЕРЕВІРКА ─────────── -->
+<section class="block" id="vruchnu">
+  <div class="label">Перевірити<br>вручну</div>
+  <div class="body">
+    <p>Це не биті посилання, а джерела, до яких немає програмного доступу. З телефона відкриваються.</p>
+    <ul class="todo">
+      <li><span><a href="https://udb.nepalpolice.gov.np/disaster">udb.nepalpolice.gov.np/disaster</a> — офіційна база фото й описів для впізнання, відкрита поліцією Непалу 01.09; на 02.09 там 911 записів. Це головний офіційний канал впізнання. Автоматично її не переглядаю: це фотографії загиблих, і рішення дивитись — тільки твоє.</span></li>
+      <li><span><a href="https://lostinnepal.org/">lostinnepal.org</a> — зручний пошук по трьох офіційних базах одразу: врятовані, заявлені зниклими, невпізнані тіла. Дані бере з поліції Непалу та NDRRMA, але сайт неофіційний і ведеться приватно, тому будь-який збіг треба перевіряти прямо в базі поліції.</span></li>
+      <li><span><a href="https://nepyork.com/2026/08/28/121-foreigners-rescued-473-still-missing-in-nepal-floods-full-name-list-by-nationality/">NEPYORK — іменний список 473 зниклих іноземців, 28.08</a>. Єдиний знайдений публічний іменний список. Варто переглянути очима на всі транслітерації.</span></li>
+      <li><span><a href="https://t.me/poshuknepal">t.me/poshuknepal</a> — група рідних, 5 072 учасники. Закритий формат, свіжі повідомлення в цей звіт не входять. Якщо там щось конкретне — скріншот, і воно піде на перевірку по Tier 1–2.</span></li>
+      <li><span><a href="https://www.instagram.com/annakovalenko_coach">Anna Kovalenko (Instagram)</a> — волонтерка з місця подій, контакт із консульством і рятувальниками.</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ─────────── ДЖЕРЕЛА ─────────── -->
+<section class="block" id="dzherela">
+  <div class="label">Джерельна<br>база</div>
+  <div class="body">
+    <div class="tbl"><table>
+      <thead><tr><th scope="col">Ярус</th><th scope="col">Джерело</th><th scope="col">Дата</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge b-ok">Tier 1</span></td><td>МЗС України — через <a href="https://www.unian.ua/incidents/nepal-kilkist-zniklih-bezvisti-ukrajinciv-zrosla-13481853.html">УНІАН</a>, <a href="https://censor.net/ua/news/4020447/povin-u-nepali-55-ukrayintsiv-vvajayutsya-znyklymy">Censor</a>, <a href="https://nv.ua/ukr/world/countries/povin-u-nepali-64-ukrajinciv-znikli-bezvisti-interpol-otrimav-geolokacijiji-telefoniv-shcho-vidomo-50636781.html">NV</a>, <a href="https://24tv.ua/povin-nepali-vidomo-shhos-pro-zniklih-ukrayintsiv_n3133027">24 Канал</a>, <a href="https://www.pravda.com.ua/news/2026/08/31/8051137/">УП</a></td><td class="mono">27–31.08</td></tr>
+        <tr><td><span class="badge b-ok">Tier 1</span></td><td>Армія Непалу — через <a href="https://kathmandupost.com/national/2026/08/30/nepali-army-rescues-2-697-people-from-flood-hit-rasuwa">Kathmandu Post</a></td><td class="mono">30.08</td></tr>
+        <tr><td><span class="badge b-ok">Tier 1</span></td><td><a href="https://india.mfa.gov.ua/news/onovlennya-shchodo-gromadyan-ukrayini-z-yakimi-vtracheno-zvyazok-u-nepali-vnaslidok-stihijnogo-liha">Посольство України в Індії — оновлення</a>; автоматично не зчиталось, перевір з телефона</td><td class="mono">28.08 16:30</td></tr>
+        <tr><td><span class="badge b-ok">Tier 1</span></td><td>Посольство України в Індії про запуск ДНК-ідентифікації та порядок для родичів — через <a href="https://lb.ua/world/2026/08/31/762664_nepali_rozpochali.html">LB.ua</a></td><td class="mono">31.08 17:49</td></tr>
+        <tr><td><span class="badge b-ok">Tier 1</span></td><td><a href="https://udb.nepalpolice.gov.np/disaster">udb.nepalpolice.gov.np</a> — база фото для впізнання, Nepal Police</td><td class="mono">відкрита 01.09</td></tr>
+        <tr><td><span class="badge b-high">Tier 2</span></td><td><a href="https://english.onlinekhabar.com/rasuwa-1058-bodies-found.html">Onlinekhabar — зведення на 1 058 знайдених</a> · <a href="https://english.onlinekhabar.com/foreign-flood-victims-bodies.html">дев'ять кроків повернення громадян інших країн</a></td><td class="mono">01.09 14:00 KTM</td></tr>
+        <tr><td><span class="badge b-high">Tier 2</span></td><td><a href="https://english.nepalnews.com/s/nation/rasuwa-flood-death-toll-reaches-1003-at-least-11884-rescued/">Nepalnews — зведення по загиблих, зниклих і врятованих</a></td><td class="mono">01.09 13:00 KTM</td></tr>
+        <tr><td><span class="badge b-high">Tier 2</span></td><td><a href="https://ianslive.in/nepal-issues-advisory-on-identification-of-remains-of-foreign-nationals-killed-in-flash-floods--20260901105846">IANS — рекомендації Непалу щодо ідентифікації тіл іноземців</a></td><td class="mono">01.09</td></tr>
+        <tr><td><span class="badge b-ok">Tier 1</span></td><td>МЗС України — етап операції та доступ до зони, через <a href="https://lb.ua/society/2026/09/02/763108_rayoni_poveni_kordoni_nepalu.html">LB.ua</a></td><td class="mono">02.09 14:34</td></tr>
+        <tr><td><span class="badge b-ok">Tier 1</span></td><td>Секретаріат прем'єр-міністра Непалу — тунель Расувагаді обстежено, людей не виявлено, через <a href="https://english.onlinekhabar.com/no-people-found-trapped-in-rasuwa-hydropower-tunnel-army-team-returns-to-dhunche.html">Onlinekhabar</a> і <a href="https://myrepublica.nagariknetwork.com/news/army-team-returns-after-searching-rasuwagadhi-hydropower-tunnel-86-88.html">myRepublica</a></td><td class="mono">31.08</td></tr>
+        <tr><td><span class="badge b-ok">Tier 1</span></td><td>NDRRMA — зведення на 03.09, через <a href="https://english.onlinekhabar.com/rasuwa-flood-1252-bodies-recovered-4216-still-missing.html">Onlinekhabar</a></td><td class="mono">03.09 12:24 KTM</td></tr>
+        <tr><td><span class="badge b-high">Tier 2</span></td><td><a href="https://english.nepalnews.com/s/nation/one-body-three-families-the-rasuwa-floods-identification-dilemma/">Nepalnews — строк ДНК і випадки, коли одне тіло заявляють кілька родин</a> (поліція Каскі)</td><td class="mono">31.08</td></tr>
+        <tr><td><span class="badge b-high">Tier 2</span></td><td><a href="https://english.onlinekhabar.com/bodies-bhotekoshi-flood-rasuwa.html">Onlinekhabar — районне зведення поліції Расуви, 104 зі 133 у Тімуре</a> · <a href="https://english.onlinekhabar.com/rasuwa-floods-how-is-work-being-carried-out-inside-the-tunnels.html">як ідуть роботи в тунелях по кожному напрямку</a></td><td class="mono">02.09 13:39 KTM</td></tr>
+        <tr><td><span class="badge b-ok">Tier 1</span></td><td>NDRRMA — зведення на 02.09, через <a href="https://english.onlinekhabar.com/bhotekoshi-flood-death-toll-4.html">Onlinekhabar</a></td><td class="mono">02.09 10:50 KTM</td></tr>
+        <tr><td><span class="badge b-ok">Tier 1</span></td><td>Поліція Непалу — звернення з порядком здачі ДНК і переліком документів, через <a href="https://english.nepalnews.com/s/security/nepal-police-seeks-dna-samples-to-identify-bodies-recovered-after-rasuwa-flood/">Nepalnews</a></td><td class="mono">31.08</td></tr>
+        <tr><td><span class="badge b-high">Tier 2</span></td><td><a href="https://myrepublica.nagariknetwork.com/news/21-bodies-from-bhotekoshi-flood-identified-in-pokhara-45-88.html">myRepublica — 21 впізнаний у Покхарі, кілька родин на одне фото</a> · <a href="https://myrepublica.nagariknetwork.com/news/1118-bodies-recovered-so-far-as-search-rescue-and-identification-efforts-co-29-48.html">зведення на 08:00 02.09</a></td><td class="mono">02.09</td></tr>
+        <tr><td><span class="badge b-high">Tier 2</span></td><td><a href="https://www.ukrinform.ua/tag-nepal">Укрінформ, тема «Непал»</a> — перевірка української ленти; останній матеріал 01.09 10:08</td><td class="mono">02.09</td></tr>
+        <tr><td><span class="badge b-ok">Tier 1</span></td><td>NDRRMA — перший урядовий ситуаційний звіт про наслідки, через <a href="https://english.onlinekhabar.com/bhotekoshi-floods-damage.html">Onlinekhabar</a></td><td class="mono">01.09 20:37 KTM</td></tr>
+        <tr><td><span class="badge b-high">Tier 2</span></td><td><a href="https://kathmandupost.com/national/2026/09/02/nepal-rescue-teams-race-to-reach-workers-feared-trapped-in-hydropower-tunnels">Kathmandu Post — деталі тунельної операції на чотирьох напрямках</a></td><td class="mono">02.09</td></tr>
+        <tr><td><span class="badge b-ok">Tier 1</span></td><td>Поліція Непалу — зведення по знайдених, зниклих і переданих родичам, через <a href="https://kathmandupost.com/national/2026/09/02/nepal-flood-death-toll-rises-to-1-127-as-4-858-remain-missing">Kathmandu Post</a></td><td class="mono">02.09 07:39 KTM</td></tr>
+        <tr><td><span class="badge b-ok">Tier 1</span></td><td><a href="https://www.indembkathmandu.gov.in/media-detail/959">Посольство Індії в Непалі — рекомендація родинам щодо бази фото для впізнання і ДНК</a>; офіційне повідомлення іншої держави, беремо як приклад робочої процедури</td><td class="mono">29.08</td></tr>
+        <tr><td><span class="badge b-high">Tier 2</span></td><td><a href="https://www.bbc.com/news/articles/c0qxw1qw3g7o">BBC — записи імміграції Расувагаді, Соутік Бісвас і Фаніндра Дахал</a>; bbc.com машинно не читається з нашого боку, текст звірено по <a href="https://www.yerepouni-news.com/the-final-minutes-before-floodwater-crashed-through-nepal-china-border/">повній перепублікації</a></td><td class="mono">01.09</td></tr>
+        <tr><td><span class="badge b-high">Tier 2</span></td><td><a href="https://www.cbsnews.com/news/nepal-flood-american-man-missing-family-desperate-for-info/">CBS News — незалежне підтвердження часу 8:35 з боку родини</a></td><td class="mono">28.08</td></tr>
+        <tr><td><span class="badge b-high">Tier 2</span></td><td><a href="https://english.onlinekhabar.com/bodies-india-bhotekoshi.html">Onlinekhabar — 13 знайдених у річці Гандак, Індія</a> · <a href="https://english.nepalnews.com/s/main-left/nepal-news-evening-briefing-tuesday-september-01-2026/">Nepalnews — вечірнє зведення 01.09</a></td><td class="mono">01.09</td></tr>
+        <tr><td><span class="badge b-high">Tier 2</span></td><td><a href="https://news.cgtn.com/news/2026-08-29/Animation-traces-path-of-Gyirong-debris-flow-1PZISAaXCww/p.html">CGTN — сім хвилин ходу потоку до порту</a> — кит. державне, аналіз без названого інституту</td><td class="mono">29.08</td></tr>
+        <tr><td><span class="badge b-mid">Tier 3</span></td><td><a href="https://lostinnepal.org/">lostinnepal.org</a> — приватний агрегатор офіційних баз; зручний для пошуку, але не джерело факту</td><td class="mono">—</td></tr>
+        <tr><td><span class="badge b-high">Tier 2</span></td><td><a href="https://english.onlinekhabar.com/hydropower-project-tunnel-rescue.html">Onlinekhabar — сьомий день тунельної операції</a></td><td class="mono">01.09 21:16 KTM</td></tr>
+        <tr><td><span class="badge b-high">Tier 2</span></td><td><a href="https://www.abc.net.au/news/2026-09-01/search-for-hundreds-in-hydropower-tunnels-in-nepal/107100624">ABC News</a> — найсвіжіші загальні цифри</td><td class="mono">01.09 07:13</td></tr>
+        <tr><td><span class="badge b-high">Tier 2</span></td><td><a href="https://www.aljazeera.com/news/2026/8/31/nepal-tunnel-traps-hinder-flood-rescue-how-many-are-dead-or-missing">Al Jazeera 31.08</a> · <a href="https://www.aljazeera.com/news/2026/8/30/nepal-rescuers-drill-into-tunnels-in-bid-to-reach-trapped-workers">30.08</a> · <a href="https://www.aljazeera.com/news/2026/8/28/is-nepal-facing-another-devastating-flood-from-a-new-lake">28.08, озеро</a></td><td class="mono">28–31.08</td></tr>
+        <tr><td><span class="badge b-high">Tier 2</span></td><td><a href="https://www.scmp.com/news/china/politics/article/3365686/china-nepal-floods-rescuers-pull-2-survivors-out-rubble-near-tibet-border-crossing">SCMP</a> · <a href="https://news.cgtn.com/news/2026-08-30/Rescuers-race-against-time-for-survivors-cause-of-mudslide-identified-1Q1EhFbDxxC/p.html">CGTN</a> — кит. державне</td><td class="mono">29–30.08</td></tr>
+        <tr><td><span class="badge b-high">Tier 2</span></td><td><a href="https://english.onlinekhabar.com/rasuwa-flood-aug-26.html">Onlinekhabar</a> · <a href="https://english.nepalnews.com/s/explainers/95-dead-hundreds-missing-what-we-know-so-far-about-bhote-koshi-flood/">Nepalnews</a></td><td class="mono">26–27.08</td></tr>
+        <tr><td><span class="badge b-high">Tier 2</span></td><td><a href="https://tsn.ua/svit/masshtabna-povin-u-nepali-55-ukrayintsiv-ne-vykhodiat-na-zviazok-sered-nykh-retryt-hrupa-blonskoyi-3157298.html">ТСН</a> · <a href="https://nv.ua/ukr/world/countries/povin-u-nepali-v-mzs-rozpovili-skilki-ukrajinciv-vvazhayutsya-zniklimi-bezvisti-50635978.html">NV 26.08</a> · <a href="https://life.pravda.com.ua/society/shcho-vidomo-pro-zniklih-ukrajinciv-vnaslidok-poveni-u-nepali-y-tibeti-317233/">УП Життя</a></td><td class="mono">26–27.08</td></tr>
+        <tr><td><span class="badge b-high">Tier 2</span></td><td><a href="https://www.icimod.org/kyirong-rasuwa-flood-2026-nepal-china-border/">ICIMOD</a> · <a href="https://www.npr.org/2026/08/31/nx-s1-5949971/nepals-hesitance-help-flood">NPR</a></td><td class="mono">28–31.08</td></tr>
+        <tr><td><span class="badge b-mid">Tier 3</span></td><td>Сигнали, не факти: <a href="https://t.me/poshuknepal">t.me/poshuknepal</a> · <a href="https://nepyork.com/2026/08/28/121-foreigners-rescued-473-still-missing-in-nepal-floods-full-name-list-by-nationality/">NEPYORK</a> · <a href="https://www.globalpostheadline.com/nepal-breaking-news/find-your-family-friend-members-in-nepal-missing-bhotekoshi-rasuwa-floods.html">GPH-база</a></td><td class="mono">28–31.08</td></tr>
+      </tbody>
+    </table></div>
+    <div class="legend">
+      <span><span class="badge b-ok">Підтв.</span> Tier 1 або 2+ незалежні Tier 2</span>
+      <span><span class="badge b-high">Висока</span> одне Tier 2 з місця, або Tier 1 непрямо</span>
+      <span><span class="badge b-mid">Середня</span> одне медіа без підтвердження</span>
+      <span><span class="badge b-low">Низька</span> одиночний сигнал Tier 3</span>
+    </div>
+    <p class="note">Не знайдено станом на цю перевірку: окремої заяви МЗС України за 1–2 вересня — остання від 31.08; офіційного іменного списку зниклих українців у відкритому доступі; жодної згадки громадян України в непальських і міжнародних джерелах поіменно; України в опублікованому розподілі врятованих іноземців за громадянствами; офіційної заяви про перехід операції від пошуку живих до підняття тіл. Перевірено списки знайдених, госпіталізованих, ідентифікованих і переданих родичам, розподіл врятованих за громадянствами, а також усі варіанти транслітерації імен, які нам передали родини. Окремо про перевірку української хвилі: у вечірньому зрізі 02.09 тут стояло, що заяв за добу немає — це було помилкою, заява МЗС від 02.09 знайшлась наступного ранку і внесена в розділ «Офіційно від України». Станом на цю перевірку заяв за 03.09 немає. Офіційного оголошення про зміну статусу операції теж немає — слово «recovery» зустрічається лише як медійне формулювання.</p>
+  </div>
+</section>
+
+<!-- ─────────── ІСТОРІЯ ─────────── -->
+<section class="block" id="history">
+  <div class="label">Історія<br>оновлень</div>
+  <div class="body">
+    <ul class="hist">
+      <li>
+        <time>03.09.2026 · 10:30 Київ · 13:15 Катманду · ранковий зріз</time>
+        Виправлено помилку вчорашнього вечірнього зрізу: заява МЗС за 2 вересня була, її внесено в «Офіційно від України» — операція переходить від первинного пошуку до розширеного наземного та глибокого, українців немає у списках загиблих і постраждалих, китайські наземні маршрути доходять до основної зони удару, на Chilime і Langtang пройдено близько 185 метрів тунелю. Додано офіційний строк зіставлення ДНК — мінімум місяць-півтора — і випадки, коли одне тіло заявляють кілька родин. Тунель Расувагаді, за повідомленням Секретаріату прем'єра від 31.08, обстежено до кінця дронами й людей не виявлено; розходження з пізнішими зведеннями зафіксовано без висновків. Зведення NDRRMA на 03.09: знайдено 1 252, зниклими рахують 4 216. Розходження по Расуві закрилось: центральне зведення наздогнало районне.
+      </li>
+      <li>
+        <time>02.09.2026 · 21:25 Київ · 03.09 00:10 Катманду · вечірній зріз</time>
+        Головне: у Расуві знайшли 133 загиблих, і 104 з них — у районі Тімуре, тобто на самому переході. Знайдених вивозять вертольотами в Бідур, центр Нувакоту, тому впізнання відбувається там; додано практичний висновок для запитів родини і нове протиріччя про два способи підрахунку по районах. Розписано роботи в тунелях по всіх шести напрямках: Расувагаді й Langtang стоять на ~150 метрах, на Trishuli-3A знайшли вихід тунелю й відкачують воду. Про знайдених у тунелях не повідомляють. Нових заяв української сторони за добу немає — перевірено повторно ввечері.
+      </li>
+      <li>
+        <time>02.09.2026 · 15:35 Київ · мовний прохід</time>
+        Проходка по всій сторінці на регістр: цифри й формулювання джерел лишились точними, але про загиблих і про тих, кого шукають, тепер сказано як про людей, а не як про облікові одиниці. Пішли слова, які ранять без потреби — «партія», «фрагменти», «автопсія», «невпізнані тіла» в нашому власному тексті. У прямих цитатах офіційних повідомлень формулювання лишились без змін, бо це цитати. Заодно прибрано персональну згадку, яка залишалась у службовому коментарі коду. Унизу сторінки додано знак OLS із дескриптором і посиланням на visich.online — той самий вузол, що на chekayu, у типографіці цієї сторінки.
+      </li>
+      <li>
+        <time>02.09.2026 · 14:40 Київ · 17:25 Катманду · денний зріз</time>
+        Головне практичне: збіг на фотографії в базі поліції — це підстава для запиту, а не впізнання. У Покхарі на фото окремих загиблих претендувала більш ніж одна родина, і такі випадки відправили на ДНК; 21 людину впізнали й повернули родинам, 81 поховали в позначених могилах зі збереженим ДНК — щоб впізнання лишалось можливим потім. Додано повний перелік документів, які поліція Непалу вимагає до ДНК-профілю з-за кордону, і контактну особу. Розмежовано медійне слово «recovery» і офіційний статус операції — статус не змінювали. Нових заяв української сторони немає.
+      </li>
+      <li>
+        <time>02.09.2026 · 11:50 Київ · 14:35 Катманду · ранковий зріз</time>
+        Перевірено матеріал BBC про електронні записи пункту імміграції Расувагаді: 89 оформлених на вихід у Тибет і четверо на вхід, остання транзакція о 8:35:03 за Непалом, чотири зниклі співробітники імміграції. Час 8:35 підтверджується незалежно через CBS від 28.08. Додано геометрію переходу — пункт імміграції у Ґхатте-Кхола за ~1,5 км від Тімуре, ще ~2 км до Моста дружби, 15–20 хвилин пішки — і нове протиріччя про час приходу води на непальський бік. Зведення поліції Непалу на ранок: 1 127 тіл, 95 передано родичам, 911 невпізнаних опубліковано з фото. Тіла знаходять уже в Індії. У розподілі врятованих іноземців за громадянствами України немає. Додано перший урядовий ситуаційний звіт NDRRMA: близько 1,6 млн постраждалих, склад зниклих (62% непальці, 17% держслужбовці, 15% іноземці), зруйновані мости, будинки й телевишки, дві громади Расуви без зв'язку. Деталі тунельної операції на чотирьох напрямках: ~150 м проходу на Расувагаді, керовані підриви, відкачування води. Нових заяв української сторони немає.
+      </li>
+      <li>
+        <time>01.09.2026 · 20:19 Київ · 23:04 Катманду · вечірній зріз</time>
+        Сьомий день тунельної операції: жодного успішного порятунку, близько 600 людей імовірно всередині тунелів, без зв'язку 894 працівники на 12 обʼєктах. Армія відкрила приватним операторам можливість вести роботи самостійно. Уточнено, що попередня цифра «близько 300 врятованих» стосувалась обʼєктів ГЕС загалом, а не порятунків із тунелів. Нових заяв української сторони за вечір немає.
+      </li>
+      <li>
+        <time>01.09.2026 · універсальна версія</time>
+        Сторінка перероблена під усі родини: персональний фокус замінено загальним блоком про громадян України, додано процедурний трек «Що робити родині» — облік у МЗС, передача фото й прикмет, база фото для впізнання, підготовка ДНК, порядок повернення, страхова й документи — і зведені контакти України, Непалу та Китаю. Персональних даних зниклих сторінка не публікує.
+      </li>
+      <li>
+        <time>01.09.2026 · 15:16 Київ · 18:01 Катманду</time>
+        Додано окремий розділ «Офіційно від України» — прямі повідомлення посольств і МЗС без переказів медіа. Нове від Посольства України в КНР: у повіті Цзілун іноземних туристів не залишилося, підтверджено 16 загиблих, іноземців серед ідентифікованих немає; 546 зниклих, з них 261 іноземець; доступ до району обмежений. Уряд КНР відкрив дві цілодобові англомовні гарячі лінії для родичів.
+      </li>
+      <li>
+        <time>01.09.2026 · 13:02 Київ · 15:47 Катманду</time>
+        Почалась ДНК-ідентифікація невпізнаних загиблих, поширюється на іноземців. Непал оприлюднив дев'ятикрокову процедуру повернення громадян інших країн і відкрив базу фото для впізнання. Знайдено 1 058 загиблих, 684 поховані до впізнання, 58 повернуто родинам — українців серед них немає. Консули особисто обходять лікарні й місця, куди привозять знайдених. Зафіксовано процедурну прогалину: опублікований шлях ДНК-впізнання спирається на родичів першого ступеня, і випадок, коли їх немає, у ньому не описаний.
+      </li>
+      <li>
+        <time>01.09.2026 · 10:44 Київ · 13:29 Катманду</time>
+        Перша публікація. Базовий стан: ніхто зі зниклих не вийшов на зв'язок; суцільне прочісування території біля КПП; Інтерпол отримав геолокації; дорога до зони переходу під водою; близько 300 врятовано з тунелів.
+      </li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <div class="label">Про сторінку</div>
+  <p>Сторінка оновлюється автоматично двічі на день: близько 9:00 і 20:00 за Києвом. Вечірній зріз ловить повний день непальських медіа та денні заяви МЗС, ранковий — першу половину дня в Непалі й нічні публікації міжнародних агенцій. Порожній результат — теж результат: якщо змін немає, тут буде прямо написано, що їх немає, і коли була остання перевірка. Жодних припущень про долю конкретних людей понад те, що кажуть джерела. Ми свідомо стежимо за мовою: цифри й формулювання джерел передані точно, але про загиблих і про тих, кого шукають, тут говорять як про людей, а не як про облікові одиниці. Сторінка не індексується пошуковиками.</p>
+  <a class="lockup" href="https://visich.online" target="_blank" rel="noopener" aria-label="OLS — бюро соціальних змін, visich.online">
+    <span class="znak">OLS<span class="krapka"></span></span>
+    <span class="rysa"></span>
+    <span class="desk">бюро соціальних змін</span>
+  </a>
+</footer>
+
+</div>
+
+<script type="application/json" id="report-state">
+{
+  "checked_at_kyiv": "2026-09-03T10:30+03:00",
+  "checked_at_ktm": "2026-09-03T13:15+05:45",
+  "scope": "all Ukrainian families; no head-count published by design",
+  "personal_data_published": false,
+  "ukrainians_list_source": "tour operators, per MFA clarification 31.08 — not a border record",
+  "ukrainians_contacted": 0,
+  "ukrainians_in_casualty_lists": false,
+  "ukrainians_among_bodies_handed_over": false,
+  "bodies_found": 1252, "autopsies_done": 1113,
+  "bodies_handed_over": 95, "bodies_buried_unidentified": 684,
+  "unidentified_published_with_photos": 911,
+  "bodies_found_in_india": 13, "bodies_counted_in_india_by_nepal_police": 9,
+  "nepal_missing": 4216, "nepal_missing_foreigners": 583,
+  "dna_matching_time_official": "minimum 1 to 1.5 months, per Kaski Police 2026-08-31",
+  "multiple_families_claiming_same_body_example": "body 1003 claimed by three families",
+  "rasuwagadhi_tunnel_searched_to_end_nobody_found": "PM Secretariat, 2026-08-31 — unresolved against 2026-09-02 field reports of work at ~150 m",
+  "upper_trishuli_tunnel_rescue_origin": "350 workers, 2026-08-27/28 — origin of the once-circulated ~300 figure",
+  "injured_figure_methodology_unclear": "292 on 2026-09-02 vs 5135 on 2026-09-03 in the same NDRRMA series",
+  "rescued_foreigners_by_nationality_includes_ukraine": false,
+  "rescued_total": 11884, "injured": 279, "injured_discharged": 168,
+  "security_personnel": 21314, "heli_flights": 592,
+  "china_dead_confirmed": 16,
+  "china_foreigners_among_identified_dead": 0,
+  "china_missing": 546, "china_missing_foreigners": 261,
+  "gyirong_county_foreign_tourists_remaining": 0,
+  "china_hotlines": ["+86 891 681 7165", "+86 183 0802 6705"],
+  "ua_embassy_cn_hotline": "+86 137 0123 0647 / consul_cn@mfa.gov.ua",
+  "operation_phase": "search_and_rescue",
+  "ndrrma_situation_report": {
+    "date": "2026-09-01",
+    "people_affected_est": 1600000,
+    "missing_composition_pct": {"nepali_and_domestic_tourists": 62, "government_employees": 17, "foreign_nationals": 15},
+    "worst_hit_districts": ["Rasuwa", "Nuwakot"],
+    "bridges_destroyed": 41, "houses_destroyed_nuwakot": 1267,
+    "telecom_towers_damaged": 188,
+    "households_cut_off_rasuwa": 3702, "people_cut_off_rasuwa": 14461,
+    "note": "figures differ from Nepal Police 02.09 summary - different agency, different cut-off"
+  },
+  "tunnel_fronts": {
+    "Rasuwagadhi": "~150 m in, stopped at large rocks",
+    "Langtang": "~150 m in, 25-person joint team incl. foreign rescuers",
+    "Chilime": "foreign and Nepali teams working",
+    "Upper Trishuli 1": "Nepal Army team searching at Haku",
+    "Trishuli-3A": "93 people, tunnel outlet located, pumping ~1.5 m of water",
+    "Trishuli-3B": "61 people, project office and residential area located, access road being built"
+  },
+  "rasuwa_district_recovered": 133,
+  "rasuwa_recovered_at_timure": 104,
+  "timure_remains_airlifted_to": "Bidur, Nuwakot district",
+  "ndrrma_2026_09_02": {"recovered": 1114, "missing": 3916, "injured": 292, "rescued": 11993},
+  "tunnel_progress_m_rasuwagadhi": 150,
+  "tunnels_people_inside_est": 600,
+  "tunnels_workers_out_of_contact": 894,
+  "tunnels_live_rescues": 0,
+  "dna_identification_started": "2026-08-31",
+  "nepal_police_unidentified_db": "udb.nepalpolice.gov.np",
+  "dna_submission_email": "dnacodis@nepalpolice.gov.np",
+  "dna_helpline": "+977 984-1616095",
+  "dna_requires_first_degree_relatives": true,
+  "dna_submission_docs_required": ["full name", "nationality", "passport details", "date and place of disappearance", "lab DNA report", "proof of donor relationship"],
+  "dna_contact_officer": "Police Inspector Sambhu Bahadur KC, +977 984-1616095",
+  "dna_lab_in_nepal": "Pathology Laboratory, Nepal Police Hospital, Maharajgunj, Kathmandu",
+  "photo_match_is_not_identification": true,
+  "multiple_families_claimed_same_photos": true,
+  "unidentified_buried_in_marked_graves": true,
+  "bodies_buried_total": 869, "bodies_buried_unidentified_of_those": 438,
+  "identified_and_handed_over_pokhara_2026_09_02": 21,
+  "phase_change_officially_announced": false,
+  "phase_change_in_media_wording_only": true,
+  "language_register_pass": "2026-09-02 — own prose speaks of people, not units; source quotes left verbatim",
+  "open_question": "published DNA procedure relies on first-degree relatives; no route stated for cases where none exist - to be raised with the consular group and Nepal Police",
+  "immigration_records_2026_08_26": {
+    "source": "BBC, 2026-09-01, Soutik Biswas and Phanindra Dahal (BBC Nepali)",
+    "exits_cleared_to_tibet": 89, "entries_registered": 4,
+    "last_transaction_local": "08:35:03",
+    "nationalities_departing": {"India": 32, "China": 12, "USA": 9, "other": ["UK", "Canada", "Australia", "Italy"]},
+    "immigration_staff_missing": 4, "office_head_body_recovered_downstream": true,
+    "independent_confirmation_of_0835": "CBS News, 2026-08-28, family of a US citizen",
+    "office_location": "Ghatte Khola bazaar, ~1.5 km north of Timure; ~2 km further to the Friendship Bridge; 15-20 min on foot",
+    "settlement_size": "50-60 houses plus hotels, businesses and four hydropower offices",
+    "china_stated_flow_travel_time_minutes": 7,
+    "unresolved": "exact minute water reached the Nepali side: Gyirong CCTV 10:52 Beijing = 08:37 Kathmandu vs CBS phrasing of ~35 minutes after 08:35"
+  },
+  "last_mfa_statement": "2026-09-02T14:34+03:00",
+  "last_embassy_in_statement": "2026-08-31T17:49+03:00",
+  "last_embassy_cn_statement": "2026-09-01",
+  "update_history": [
+    "2026-09-01T10:44+03:00 перша публікація",
+    "2026-09-01T13:02+03:00 ДНК-ідентифікація, процедура повернення тіл іноземців, база фото Nepal Police, 1058 тіл",
+    "2026-09-01T15:16+03:00 окремий розділ «Офіційно від України»; заява Посольства в КНР: Цзілун без іноземних туристів, 16 загиблих, гарячі лінії КНР",
+    "2026-09-01 універсальна версія: блок #ukrainci замість персонального фокусу, новий розділ #scho-robyty з процедурним треком і контактами",
+    "2026-09-01T20:19+03:00 вечірній зріз: сьомий день тунельної операції без успішних порятунків, ~600 імовірно в тунелях, 894 без звʼязку на 12 обʼєктах",
+    "2026-09-03T10:30+03:00 ранковий зріз: виправлено пропуск заяви МЗС за 02.09 і внесено її зміст; офіційний строк ДНК 1–1,5 місяця; тунель Расувагаді обстежено без знайдених; NDRRMA 1252 / 4216; розходження по Расуві закрилось",
+    "2026-09-02T21:25+03:00 вечірній зріз: 104 зі 133 знайдених у Расуві — у Тімуре, вивозять у Бідур (Нувакот); тунелі по шести напрямках; нових заяв української сторони за добу немає",
+    "2026-09-02T15:35+03:00 мовний прохід: регістр по всій сторінці — про людей, не про облікові одиниці; цитати джерел без змін",
+    "2026-09-02T14:40+03:00 денний зріз: збіг фото не є впізнанням (кілька родин на одне фото в Покхарі), 21 ідентифіковано й передано, 81 у позначених могилах; повний перелік документів до ДНК-профілю з-за кордону; «recovery» лише як медійне формулювання",
+    "2026-09-02T11:50+03:00 ранковий зріз: перевірено записи імміграції за 26.08 (BBC), час 8:35 підтверджено незалежно через CBS; геометрія переходу; нове протиріччя про час приходу води; 1127 тіл, 95 передано родичам, 911 невпізнаних із фото; тіла в Індії; України немає в розподілі врятованих іноземців"
+  ]
+}
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
