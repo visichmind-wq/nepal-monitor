@@ -1,6 +1,8 @@
 import { chromium } from 'playwright';
 
-const FILE = 'file:///home/claude/nepal-monitor/index.html';
+const TARGET = process.argv[2] || '/home/claude/nepal-monitor/index.html';
+const FILE = 'file://' + TARGET;
+const SHOTNAME = TARGET.split('/').pop().replace(/\.html$/, '');
 const VIEWPORTS = [
   { w: 320, h: 900, n: '320 (малий телефон)' },
   { w: 375, h: 900, n: '375 (iPhone)' },
@@ -43,6 +45,13 @@ for (const mode of MODES) {
     const res = await page.evaluate(() => {
       const out = { overflowX: 0, collisions: [], tiny: [], clipped: [], transparentBody: false };
 
+      // Chromium лишає бокси нащадкам закритого <details> (для пошуку по сторінці),
+      // тому весь згорнутий вміст лежить в одній точці й дає фальшиві накладання.
+      const inClosedDetails = el => {
+        const d = el.closest('details');
+        return !!d && !d.open && !el.closest('summary');
+      };
+
       // 1. горизонтальний оверфлоу документа
       out.overflowX = document.documentElement.scrollWidth - document.documentElement.clientWidth;
 
@@ -53,6 +62,7 @@ for (const mode of MODES) {
       out.escaped = [];
       document.querySelectorAll('body *').forEach(el => {
         if (el.classList.contains('shell') || el.closest('script')) return;
+        if (inClosedDetails(el)) return;
         const r = el.getBoundingClientRect();
         if (r.width === 0 || r.height === 0) return;
         const scrollable = el.closest('.tbl, .mapwrap');
@@ -84,7 +94,7 @@ for (const mode of MODES) {
         const cs = getComputedStyle(el);
         return cs.display !== 'none' && cs.visibility !== 'hidden' && +cs.opacity > 0.05;
       };
-      const leaves = [...document.querySelectorAll('.shell *')].filter(isTextLeaf);
+      const leaves = [...document.querySelectorAll('.shell *')].filter(el => isTextLeaf(el) && !inClosedDetails(el));
       // порядкові фрагменти, не union-rect: інлайн-елемент, перенесений на 2 рядки,
       // має union-прямокутник, що фальшиво «накладається» на сусіда з іншого рядка
       const boxes = [];
@@ -115,6 +125,7 @@ for (const mode of MODES) {
       document.querySelectorAll('.shell *').forEach(el => {
         const t = [...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim().length > 2);
         if (!t) return;
+        if (inClosedDetails(el)) return;
         const fs = parseFloat(getComputedStyle(el).fontSize);
         if (fs < 10.5) out.tiny.push({ sel: el.className || el.tagName, fs });
       });
@@ -126,6 +137,7 @@ for (const mode of MODES) {
         const txt = [...el.childNodes].filter(n => n.nodeType === 3)
           .map(n => n.textContent.trim()).join('');
         if (txt.length < 9) return;
+        if (inClosedDetails(el)) return;
         const r = el.getBoundingClientRect();
         if (r.width > 0 && r.width < 40) {
           out.squeezed.push({ sel: el.className || el.tagName, w: +r.width.toFixed(1),
@@ -136,7 +148,9 @@ for (const mode of MODES) {
       // 5. інваріанти схеми зони: 5 станцій, рівні ширини, різні лівi краї
       out.flowBroken = null;
       const st = [...document.querySelectorAll('.station')];
-      if (st.length !== 5) out.flowBroken = `станцій ${st.length}, а не 5`;
+      const hasFlow = st.length > 0 || !!document.querySelector('.mapwrap');
+      if (!hasFlow) { /* сторінка без схеми зони — перевірка не застосовується */ }
+      else if (st.length !== 5) out.flowBroken = `станцій ${st.length}, а не 5`;
       else {
         const rs = st.map(e => e.getBoundingClientRect());
         const lefts = new Set(rs.map(r => Math.round(r.left)));
@@ -220,7 +234,7 @@ for (const mode of MODES) {
     if (res.barMismatch) console.log(`      ▬ липка смуга: ${res.barMismatch}`);
 
     if ((vp.w === 430 || vp.w === 1440) && !mode.stamp) {
-      await page.screenshot({ path: `/home/claude/nepal-monitor/shot-${scheme}-${vp.w}.png`, fullPage: true });
+      await page.screenshot({ path: `/home/claude/nepal-monitor/shot-${SHOTNAME}-${scheme}-${vp.w}.png`, fullPage: true });
     }
     await ctx.close();
   }
