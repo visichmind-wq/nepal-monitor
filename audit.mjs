@@ -3,6 +3,8 @@ import { chromium } from 'playwright';
 const TARGET = process.argv[2] || '/home/claude/nepal-monitor/index.html';
 const FILE = 'file://' + TARGET;
 const SHOTNAME = TARGET.split('/').pop().replace(/\.html$/, '');
+// мовний режим сторінки: 'uk' | 'en' | null (лишити те, що поставить сама сторінка)
+const LANG = process.argv[3] || null;
 const VIEWPORTS = [
   { w: 320, h: 900, n: '320 (малий телефон)' },
   { w: 375, h: 900, n: '375 (iPhone)' },
@@ -39,6 +41,9 @@ for (const mode of MODES) {
     if (mode.stamp) {
       await page.evaluate(t => document.documentElement.setAttribute('data-theme', t), mode.stamp);
     }
+    if (LANG) {
+      await page.evaluate(l => document.documentElement.setAttribute('data-lang', l), LANG);
+    }
     await page.waitForTimeout(600); // шрифти
     const scheme = mode.n.trim();
 
@@ -50,6 +55,13 @@ for (const mode of MODES) {
       const inClosedDetails = el => {
         const d = el.closest('details');
         return !!d && !d.open && !el.closest('summary');
+      };
+
+      // Прихована мовна версія (display:none) лишає нульові бокси в одній точці.
+      // Для геометрії це те саме, що згорнутий <details>: міряти можна лише видиме.
+      const isVisible = el => {
+        const r = el.getBoundingClientRect();
+        return r.width > 0 && r.height > 0;
       };
 
       // 1. горизонтальний оверфлоу документа
@@ -147,7 +159,7 @@ for (const mode of MODES) {
 
       // 5. інваріанти схеми зони: 5 станцій, рівні ширини, різні лівi краї
       out.flowBroken = null;
-      const st = [...document.querySelectorAll('.station')];
+      const st = [...document.querySelectorAll('.station')].filter(isVisible);
       const hasFlow = st.length > 0 || !!document.querySelector('.mapwrap');
       if (!hasFlow) { /* сторінка без схеми зони — перевірка не застосовується */ }
       else if (st.length !== 5) out.flowBroken = `станцій ${st.length}, а не 5`;
@@ -194,8 +206,8 @@ for (const mode of MODES) {
         const pos = getComputedStyle(bar).position;
         if (window.innerWidth <= 780 && pos === 'sticky') out.barMismatch = 'на вузькому екрані смуга досі sticky';
         // навігація не має розповзатися на другий рядок
-        const nav = bar.querySelector('nav');
-        const links = [...bar.querySelectorAll('nav a')];
+        const nav = [...bar.querySelectorAll('nav')].filter(isVisible)[0] || null;
+        const links = [...bar.querySelectorAll('nav a')].filter(isVisible);
         // нічого не має бути обрізане приховиним скролом
         if (nav && nav.scrollWidth > nav.clientWidth + 1) {
           out.barMismatch = `навігація обрізана: ${nav.scrollWidth} проти ${nav.clientWidth}`;

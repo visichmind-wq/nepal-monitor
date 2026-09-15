@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="uk">
+<html lang="uk" data-lang="uk">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,6 +10,32 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500&display=swap">
 <style>
+/* ══════════ МОВА ══════════ */
+[data-lang="uk"] .en-only{display:none !important}
+[data-lang="en"] .uk-only{display:none !important}
+.langtog{display:inline-flex; border:1px solid var(--hair); border-radius:3px; overflow:hidden; align-self:center}
+.langtog button{
+  font:600 10.5px/1 "Archivo",system-ui,sans-serif; letter-spacing:.07em;
+  padding:5px 9px; border:0; background:var(--surface); color:var(--muted); cursor:pointer;
+}
+.langtog button + button{border-left:1px solid var(--hair)}
+.langtog button[aria-pressed="true"]{background:var(--accent); color:#fff}
+.langtog button:focus-visible{outline:2px solid var(--accent); outline-offset:-2px}
+.about .body > h3{
+  font:600 .82rem/1.3 "Archivo",system-ui,sans-serif; letter-spacing:.04em;
+  text-transform:uppercase; color:var(--accent); margin:18px 0 6px;
+}
+.about .body > h3:first-child{margin-top:0}
+.about .body > p{margin:0 0 10px}
+.about .lang-note{
+  border-left:var(--rule) solid var(--hair); padding:8px 0 8px 12px;
+  color:var(--muted); font-size:.9rem; margin-top:16px;
+}
+.uk-log-note{
+  border:1px solid var(--hair); background:var(--sunk); border-radius:3px;
+  padding:10px 12px; margin-bottom:14px; font-size:.9rem; color:var(--ink-soft);
+}
+
 /* ══════════ ТОКЕНИ ══════════ */
 :root{
   --paper:#F1F4F6; --surface:#FFFFFF; --sunk:#E8EDF1;
@@ -461,17 +487,23 @@ footer p{grid-column:2; font-size:.775rem; color:var(--muted); line-height:1.6; 
 <div class="shell">
 
 <header class="masthead">
-  <div class="kicker">Расувагаді · Тімуре · повінь 26.08.2026</div>
-  <h1>Пошук у Непалі — статус</h1>
-  <p class="sub">Для родин громадян України, з якими обірвався зв'язок. Що змінилося за добу, що офіційно каже українська сторона і що робити далі. Кожне твердження має статус достовірності й посилання на першоджерело.</p>
+  <div class="kicker uk-only">Расувагаді · Тімуре · повінь 26.08.2026</div>
+  <div class="kicker en-only">Rasuwagadhi · Timure · flood of 26 August 2026</div>
+  <h1 class="uk-only">Пошук у Непалі — статус</h1>
+  <h1 class="en-only">The search in Nepal — status</h1>
+  <p class="sub uk-only">Для родин громадян України, з якими обірвався зв'язок. Що змінилося за добу, що офіційно каже українська сторона і що робити далі. Кожне твердження має статус достовірності й посилання на першоджерело.</p>
+  <p class="sub en-only">For the families of Ukrainian citizens who stopped answering. What changed in the last day, what the Ukrainian authorities have said officially, and what to do next. Every statement carries a confidence marker and a link to its primary source.</p>
 </header>
 
 <div class="statusbar">
   <span class="when">
-    <span>Перевірено: <b class="mono" id="checked-at">13.09.2026 20:30 Київ · 23:15 Катманду</b></span>
+    <span>Перевірено: <b class="mono" id="checked-at">15.09.2026 09:00 Київ · 11:45 Катманду</b></span>
     <span>Далі: <b>20:00 Київ</b></span>
   </span>
-  <nav aria-label="Розділи">
+  <span class="langtog" role="group" aria-label="Мова сторінки / Page language">
+    <button type="button" data-lang="uk" aria-pressed="true">УКР</button><button type="button" data-lang="en" aria-pressed="false">ENG</button>
+  </span>
+  <nav aria-label="Розділи" class="uk-only">
     <a href="#pidtrymka">Якщо накриває</a>
     <a href="#oficialno">Офіційно</a>
     <a href="#ukrainci">Українці</a>
@@ -480,18 +512,153 @@ footer p{grid-column:2; font-size:.775rem; color:var(--muted); line-height:1.6; 
     <a href="#clash">Протиріччя</a>
     <a href="#dzherela">Джерела</a>
   </nav>
+  <nav aria-label="Sections" class="en-only">
+    <a href="#en-now">Where things stand</a>
+    <a href="#en-do">If you are a family</a>
+    <a href="#en-open">Unresolved</a>
+    <a href="#en-method">Sources &amp; method</a>
+    <a href="#delta">Daily log</a>
+  </nav>
 </div>
 
+<!-- ─────────── ЩО ЦЕ ТАКЕ ─────────── -->
+<section class="block about" id="about">
+  <div class="label uk-only">Що це<br>таке</div>
+  <div class="label en-only">About<br>this page</div>
+
+  <div class="body uk-only">
+    <h3>Що це</h3>
+    <p>Сторінка-монітор про пошук людей, які зникли після повені 26 серпня 2026 року на кордоні Непалу й Тибету — у долині Бхоте-Косі, біля переходу К'їронг–Расувагаді. Її веде родина одного з тих, кого шукають, для інших таких самих родин.</p>
+
+    <h3>Для чого</h3>
+    <p>Коли зникає багато людей одночасно, відомості про них розсипаються по десятках джерел різними мовами: зведення непальських відомств, заяви китайської сторони, дипломатичні канали, місцева преса, чутки в чатах. Родина фізично не може за цим стежити — а саме родині щодня доводиться вирішувати, чому вірити. Ця сторінка збирає все в одному місці двічі на добу й каже, що з цього перевірено, а що ні.</p>
+
+    <h3>Як це працює</h3>
+    <p>Двічі на добу, о 09:00 і 20:00 за Києвом, джерела перевіряються заново. Кожне твердження має позначку достовірності — «Підтверджено», «Висока», «Середня», «Низька» — і посилання на першоджерело. Цифри лишаються з датою, коли їх оприлюднили: якщо свіжого зведення немає, сторінка так і пише, а не переставляє стару цифру під нову дату. Коли джерела суперечать одне одному, обидві версії лишаються поруч із назвами джерел — сторінка не обирає зручнішу. Помилки виправляються відкрито, в тексті, а не тихо.</p>
+
+    <h3>Чому саме так</h3>
+    <p>Бо в такій ситуації найбільше шкодить не брак новин, а несправжня певність. Заголовок, який не збігається з власним текстом; торішня цифра під сьогоднішньою датою; «мені сказали в чаті» — усе це коштує родинам сил, яких у них і так немає. Тому тут краще сказати «сьогодні змін немає», ніж заповнити день чимось схожим на новину. І з тієї самої причини тут ніколи не називають, скільки саме громадян України розшукують: за будь-якою такою цифрою живі люди та їхні родини, і ця сторінка не веде їм рахунок.</p>
+
+    <p class="lang-note">Первинна мова цієї сторінки — українська. Англійська версія є перекладом, і в ньому можливі неточності. Якщо формулювання розходяться, українське вважається основним. Прямі цитати офіційних заяв подано мовою оригіналу або в перекладі з назвою джерела.</p>
+  </div>
+
+  <div class="body en-only">
+    <h3>What this is</h3>
+    <p>A monitoring page about the search for people missing since the flood of 26 August 2026 on the Nepal–Tibet border — in the Bhote Koshi valley, near the Gyirong–Rasuwagadhi crossing. It is kept by the family of one of the missing, for other families in the same position.</p>
+
+    <h3>What it is for</h3>
+    <p>When many people go missing at once, what is known about them scatters across dozens of sources in several languages: Nepali agency briefings, Chinese statements, diplomatic channels, local press, and rumour in group chats. A family cannot realistically track that — and yet it is the family who has to decide, every day, what to believe. This page gathers it in one place twice a day and says plainly which parts are verified and which are not.</p>
+
+    <h3>How it works</h3>
+    <p>Sources are re-checked twice daily, at 09:00 and 20:00 Kyiv time. Every statement carries a confidence marker — Confirmed, High, Medium, Low — and a link to its primary source. Figures keep the date on which they were published: when there is no fresh briefing, the page says so rather than restamping an old number with a new date. Where sources conflict, both versions stay side by side with their sources named; the page does not pick the more convenient one. Corrections are made openly, in the text, rather than quietly.</p>
+
+    <h3>Why it is built this way</h3>
+    <p>Because in a situation like this the greater harm is not the absence of news but false certainty. A headline that contradicts its own article; last week's figure under today's date; "someone in a chat said" — each of these costs families energy they do not have. So it is better here to say "nothing changed today" than to fill the day with something news-shaped. For the same reason this page never states how many Ukrainian citizens are being sought: behind any such number are living people and their families, and this page does not keep a tally of them.</p>
+
+    <p class="lang-note">The primary language of this page is Ukrainian. The English version is a translation and may contain inaccuracies. Where the two differ, the Ukrainian text governs. Direct quotations from official statements are given in the original or in translation with the source named. The day-by-day log and the full update history below remain in Ukrainian: they are the working record, and translating them daily would risk the two versions drifting apart.</p>
+  </div>
+</section>
+
+<!-- ─────────── ENGLISH: WHERE THINGS STAND ─────────── -->
+<section class="block en-only" id="en-now">
+  <div class="label">Where things<br>stand</div>
+  <div class="body">
+    <p class="lede">Nobody among the Ukrainian citizens being sought has been reached, and none appear in any published list of the dead, the injured or the identified. Search and recovery are officially continuing; no authority on either side of the border has announced that the operation is winding down. Identification is the slow part, and it is now the whole story: almost everyone recovered can only be identified by DNA, and for the first time the police laboratory has given a timeframe — roughly a month for the whole caseload, with the aim of finishing within Kartik, the Nepali month running from about mid-October to mid-November.</p>
+
+    <ul class="facts">
+      <li><span class="badge b-ok">Confirmed</span><span>1,388 people recovered; 103 returned to their families; 1,230 given final rites or temporarily buried after identification procedures were completed — Nepal Police, 12–13 September</span></li>
+      <li><span class="badge b-ok">Confirmed</span><span>Three state registers give different counts of those being searched for, because they are three different lists with different rules of entry, not three versions of one number: Nepal Police 4,089 (12–13 Sept), NDRRMA 5,130 (11 Sept), the Prime Minister's Office enquiry portal 12,641 (10 Sept). The portal itself warns that one person may be registered more than once</span></li>
+      <li><span class="badge b-ok">Confirmed</span><span>13,676 people rescued or evacuated from unsafe areas; more than 21,000 personnel from three security services involved; over 1,700 helicopter sorties — NDRRMA, morning of 11 September</span></li>
+      <li><span class="badge b-ok">Confirmed</span><span>3,132 DNA samples collected: 1,846 from relatives and 1,286 from the recovered. More than 400 have been tested. The central laboratory processes 25–30 samples a day on four machines; a routine sample takes about 90 minutes, but extracting usable material from bone or teeth takes up to four days — Nepal Police, 12–13 September</span></li>
+      <li><span class="badge b-ok">Confirmed</span><span>Identification uses three methods, not one: DNA; fingerprints checked against the national ID database; and photograph matching through purpose-built Disaster Victim Identification software. Photographs and identifying features submitted by families are therefore a live working channel, not a formality — Nepal Police, 12–13 September</span></li>
+      <li><span class="badge b-ok">Confirmed</span><span>Temporary burial does not close identification. Under the amended directive, identification evidence is retained for up to 12 years, and the directive states that the route to identification must stay open even after a body is buried. Bodies were buried because there was no cold storage capacity, not because identification stopped</span></li>
+      <li><span class="badge b-ok">Confirmed</span><span>On the Chinese side of the crossing, as of 6 September: 43 dead and 519 missing, of whom 261 are nationals of 23 other countries. Identification there runs on fingerprints and identifying features such as tattoos, and 993 personal items have been collected; Beijing has not published a DNA procedure and has not answered whether footage from the crossing's cameras will be given to families — Chinese authorities via Reuters</span></li>
+      <li><span class="badge b-mid">Medium</span><span>Testing is being extended beyond the single Kathmandu laboratory, but sources name different cities: police spoke of Hetauda "within a week" on 12–13 September, while a 13 September report names Dharan and Nepalgunj. Both are left standing here. Expert teams from China, India and South Korea have arrived to assist</span></li>
+      <li><span class="badge b-ok">Confirmed</span><span>NDRRMA has published no consolidated briefing with figures since the morning of 11 September. No suspension of the search has been announced by anyone. A pause in reporting and a pause in searching are different things, and the first does not imply the second</span></li>
+    </ul>
+
+    <p class="src">Full sourcing, item by item and date by date, is in the daily log below. Each entry there carries its own links.</p>
+  </div>
+</section>
+
+<!-- ─────────── ENGLISH: IF YOU ARE A FAMILY ─────────── -->
+<section class="block en-only" id="en-do">
+  <div class="label">If you are<br>a family</div>
+  <div class="body">
+    <p>Assembled from official notices by Nepal Police, Nepal's Ministry of Foreign Affairs and the consular services involved. These steps do not depend on one another and can be done in parallel. This page is not an authority and cannot act on anyone's behalf; it points to the bodies that can.</p>
+
+    <ol class="steps">
+      <li><div class="st-body">
+        <h3>Register with your own foreign ministry, if you have not</h3>
+        <p>Ask for a case or registration number. Without one, every subsequent conversation starts from nothing. Ask also whether the person is actually on the missing list: the early lists were assembled by tour operators, so some people were never on them.</p>
+      </div></li>
+
+      <li><div class="st-body">
+        <h3>Submit a DNA sample — and send identifying features and photographs separately</h3>
+        <p>Relatives abroad can obtain a DNA profile locally and send the report to Nepal Police rather than travelling; the procedure for foreign families has been published by Nepal Police. Alongside it, send photographs and descriptions of tattoos, scars, dental work, jewellery, manicure and clothing details. This is not a secondary channel: photo matching and fingerprints are two of the three methods in use, and on the Chinese side of the crossing they are currently the only published ones.</p>
+      </div></li>
+
+      <li><div class="st-body">
+        <h3>Expect the wait to be measured in weeks, not days — and know why</h3>
+        <p>A profile has to be built for each recovered person before it can be compared against relatives' samples, so most of the work is preparation rather than comparison. The laboratory's own estimate is about a month for the whole caseload. That is a timeline for the backlog, not a date for any individual answer, and it is a plan that may slip.</p>
+      </div></li>
+
+      <li><div class="st-body">
+        <h3>If a criminal investigation exists, ask the investigator about device records — and do it now</h3>
+        <p>Apple's published rules for government and law-enforcement requests outside the US state that Find My location cannot be produced, because Apple does not retain it. Connection logs, Find My activity logs and iCloud connection logs can be produced on a lawful request, and there is an expedited channel for threat to life. Retention is up to 25 days, so for an event on 26 August that window closes around 20 September. A family cannot file such a request; a state body can. Other manufacturers and carriers follow the same logic with their own retention periods, which need checking separately.</p>
+      </div></li>
+
+      <li><div class="st-body">
+        <h3>Check the date and the number inside any article before forwarding it</h3>
+        <p>Headlines in this story have repeatedly disagreed with their own text, and figures from earlier briefings keep reappearing under fresh dates. Two checks catch most of it: when was this published, and does the number in the headline match the number in the body.</p>
+      </div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ─────────── ENGLISH: UNRESOLVED ─────────── -->
+<section class="block en-only" id="en-open">
+  <div class="label">Still<br>unresolved</div>
+  <div class="body">
+    <p>Things this page has not been able to settle. They are listed rather than smoothed over, because an open question stated plainly is more useful than a confident answer that turns out to be wrong.</p>
+    <ul class="facts">
+      <li><span class="badge b-mid">Open</span><span>Whether Nepal and China cross-match DNA profiles with each other. Chinese specialists are assisting in Nepali laboratories, but presence is not evidence of data exchange, and no procedure has been published on either side</span></li>
+      <li><span class="badge b-mid">Open</span><span>Whether footage from the cameras at the Gyirong crossing exists and whether it will be released to families. Two independent sources record that the Chinese side has neither confirmed nor refused. This page does not read silence as refusal</span></li>
+      <li><span class="badge b-mid">Open</span><span>Which of the three state registers of the missing is the operative one, and how much overlap there is between them</span></li>
+      <li><span class="badge b-mid">Open</span><span>How many people remain in the hydropower tunnels, and where the second laboratory is actually being set up — sources give different figures and different cities</span></li>
+    </ul>
+    <p class="src">Where two sources give different numbers for the same thing, both stay on this page with their dates and their sources. Several such pairs are recorded in the daily log below.</p>
+  </div>
+</section>
+
+<!-- ─────────── ENGLISH: SOURCES AND METHOD ─────────── -->
+<section class="block en-only" id="en-method">
+  <div class="label">Sources<br>&amp; method</div>
+  <div class="body">
+    <p><b>Primary sources, in the order they are trusted.</b> Official Nepali bodies first — NDRRMA, Nepal Police and its Central Forensic Science Laboratory, the Ministry of Foreign Affairs, district administrations, the Nepal Army and the Armed Police Force. Then Ukrainian official statements and the relevant embassies. Then established news agencies and Nepali outlets of record. Rumour, group chats and unattributed claims are not used, and neither are aggregators that do not name where a figure came from.</p>
+
+    <p><b>What the confidence markers mean.</b> <span class="badge b-ok">Confirmed</span> a named official body said it, or two independent sources report it. <span class="badge b-high">High</span> one reliable source, consistent with everything else known. <span class="badge b-mid">Medium</span> reported, but single-sourced or partly contradicted elsewhere. <span class="badge b-low">Low</span> circulating but unverified — recorded so that it can be recognised, not because it is believed.</p>
+
+    <p><b>Rules the page holds itself to.</b> A figure keeps the date it was published; nothing is restamped. When there is no fresh briefing, the page says there is none and says how many days that has run. Conflicting figures are both published, with sources, and neither is quietly dropped. Errors are corrected visibly in the text, with what was wrong stated, not edited away — several such corrections are in the log below. No number of missing Ukrainian citizens is published, by choice. No personal data of any missing person appears here.</p>
+
+    <p><b>Who keeps it.</b> A family member of one of the missing, in Kyiv, with research and drafting assistance from an AI assistant. It is not an official source and does not speak for any authority. Where it differs from an official statement, the official statement is the one to follow — and this page will say so.</p>
+
+    <p class="src">Corrections, additions and questions are welcome; the page would rather be corrected than consistent.</p>
+  </div>
+</section>
+
 <!-- ─────────── СТАТУС ─────────── -->
-<section class="block" id="status">
+<section class="block uk-only" id="status">
   <div class="label">Головне зараз</div>
   <div class="body">
-    <p class="lede">Упізнання вперше за три дні зрушило: родинам повернули 102 людини замість 98. Тих, хто не вийшов на звʼязок, у зведенні на 18:00 8 вересня рахують уже 5 326 — тобто перелік не скорочується, а росте. Раніше в зведеннях стояло близько 4 994 — цю цифру дає NDRRMA і сама попереджає, що в ній ще можуть бути і вже впізнані, і врятовані. Окремо Департамент туризму опублікував перелік на 775 зниклих, з них 587 громадяни інших країн, — це інший, вужчий облік, а не звірена загальна цифра. Армія Непалу заявила, що роботи в тунелях продовжать «поки не буде прориву»; живими за минулі дні знайшли щонайменше пʼятьох, і не лише під землею. Ніхто з громадян України, кого розшукують, не вийшов на зв'язок. Пошуково-рятувальні роботи офіційно тривають — тобто Непал досі шукає живих, а не тільки тіла. З 31.08 паралельно йде ДНК-впізнання, воно поширюється на іноземців і з 3 вересня є обовʼязковою умовою передачі тіла родині; за офіційними оцінками зіставлення займає від місяця-півтора до двох-трьох місяців залежно від району. Зона пошуку розширилась: тіла знаходять уже на території Індії, за сотні кілометрів вниз за течією.</p>
+    <p class="lede">Ніхто з громадян України, кого розшукують, не вийшов на зв'язок, і нікого з них немає в жодному опублікованому переліку загиблих, постраждалих чи впізнаних. Пошуково-рятувальні роботи офіційно тривають: заяв про згортання операції не робила жодна сторона. Уся справа зараз в упізнанні, і воно повільне — майже всіх, кого знаходять, можна впізнати тільки за ДНК. Родинам повернуто 103 людини; знайдено 1 388; поховано після завершення всіх процедур упізнання 1 230. Уперше названо строк: криміналістична лабораторія поліції каже, що на всю роботу з ДНК потрібно приблизно місяць, а мета — завершити її в межах картіка, тобто орієнтовно до середини листопада. Це строк для всього масиву, а не дата відповіді про конкретну людину. Тих, кого шукають, три державні обліки рахують по-різному — 4 089, 5 130 і 12 641, — і це три різні переліки з різними правилами внесення, а не три версії однієї цифри. Поховання не закриває впізнання: матеріали зберігають до 12 років. Зона пошуку лишається широкою — тіла знаходили і на території Індії, за сотні кілометрів униз за течією.</p>
     <ul class="facts">
-      <li><span class="badge b-ok">Підтв.</span><span>Родинам повернуто 102 людини — уперше за три дні цифра зрушила, до того трималась на 98 — NDRRMA, 08.09 18:00</span></li>
-      <li><span class="badge b-ok">Підтв.</span><span>Не вийшли на звʼязок 5 326 людей за зведенням на 18:00 08.09; напередодні було близько 4 994 — перелік росте, а не скорочується</span></li>
-      <li><span class="badge b-mid">Середня</span><span>Не вийшли на звʼязок близько 4 994 людини; NDRRMA попереджає, що в цій цифрі ще можуть бути вже впізнані й уже врятовані, дані перевіряють — NDRRMA, 07.09 18:00</span></li>
-      <li><span class="badge b-ok">Підтв.</span><span>Окремо Департамент туризму Непалу опублікував перелік на 775 зниклих, з них 587 громадяни інших країн, станом на 06.09 17:00. Це інший облік, а не та сама цифра — Департамент туризму, 07.09</span></li>
+      <li><span class="badge b-ok">Підтв.</span><span>Родинам повернуто 103 людини; знайдено 1 388; поховано після всіх процедур упізнання 1 230 — поліція Непалу, 12–13.09</span></li>
+      <li><span class="badge b-ok">Підтв.</span><span>Уперше названо строк роботи з ДНК: приблизно місяць на весь масив, мета — завершити в межах картіка, тобто орієнтовно до середини листопада. Спершу треба зробити профіль кожного тіла і лише потім звіряти зі зразками родин — криміналістична лабораторія поліції Непалу, 13.09</span></li>
+      <li><span class="badge b-ok">Підтв.</span><span>Зібрано 3 132 зразки ДНК: 1 846 від родин і 1 286 із тіл; перевірено понад 400. Лабораторія обробляє 25–30 зразків на добу на чотирьох апаратах — поліція Непалу, 12–13.09</span></li>
+      <li><span class="badge b-ok">Підтв.</span><span>Упізнають трьома способами, не одним: ДНК, відбитки пальців за базою національних посвідчень і звіряння фотографій окремою програмою. Тому передані родинами фото й особливі прикмети — це робочий канал, а не формальність — поліція Непалу, 12–13.09</span></li>
+      <li><span class="badge b-ok">Підтв.</span><span>Тих, кого шукають, три державні обліки дають по-різному: поліція 4 089 (12–13.09), NDRRMA 5 130 (11.09), портал звернень при Кабінеті Прем'єра 12 641 (10.09). Сам портал попереджає, що одна людина може бути внесена не один раз</span></li>
+      <li><span class="badge b-ok">Підтв.</span><span>Зведення NDRRMA із цифрами не виходять із ранку 11 вересня. Про зупинку чи згортання пошуку при цьому не оголошував ніхто — пауза у звітності й пауза в пошуку різні речі</span></li>
       <li><span class="badge b-ok">Підтв.</span><span>Армія Непалу: роботи в тунелях продовжать, «поки не буде прориву і якщо уряд не вирішить інакше». За оцінкою армії, в тунелях може бути 121 людина — бригадний генерал Субаш Джунг Тхапа і речник Раджа Рам Баснет на пресконференції NDRRMA, 07.09</span></li>
       <li><span class="badge b-ok">Підтв.</span><span>МЗС Непалу веде окремий контрольний центр для родин іноземних громадян: +977 974-444-1227 і +977 974-444-1228, з 6:00 до 22:00 за часом Непалу, і пошта emergency@mofa.gov.np — щоденне зведення МЗС Непалу, 07.09 14:00</span></li>
       <li><span class="badge b-ok">Підтв.</span><span>Живою знайшли жінку — Чандіку Кумарі Шрестху — у пошкодженому будинку в місті Нувакот, на десятий день. Була засипана брудом; рятувальники дали їй води й вертольотом відправили до Катманду — армія Непалу, 06.09</span></li>
@@ -511,7 +678,7 @@ footer p{grid-column:2; font-size:.775rem; color:var(--muted); line-height:1.6; 
 </section>
 
 <!-- ─────────── ПЕРЕХІД НА ПІДТРИМКУ ─────────── -->
-<section class="block" id="pidtrymka">
+<section class="block uk-only" id="pidtrymka">
   <div class="label">Якщо накриває</div>
   <div class="body">
     <a class="support" href="https://chekayu.visich.online" target="_blank" rel="noopener">
@@ -533,7 +700,7 @@ footer p{grid-column:2; font-size:.775rem; color:var(--muted); line-height:1.6; 
 </section>
 
 <!-- ─────────── ОФІЦІЙНО ВІД УКРАЇНИ ─────────── -->
-<section class="block" id="oficialno">
+<section class="block uk-only" id="oficialno">
   <div class="label">Офіційно<br>від України</div>
   <div class="body">
 
@@ -604,9 +771,64 @@ footer p{grid-column:2; font-size:.775rem; color:var(--muted); line-height:1.6; 
 
 <!-- ─────────── ДЕЛЬТА ─────────── -->
 <section class="block" id="delta">
-  <div class="label">Що змінилось<br>за добу</div>
+  <div class="label uk-only">Що змінилось<br>за добу</div>
+  <div class="label en-only">Daily<br>log</div>
   <div class="body">
+    <div class="uk-log-note en-only">This is the working log, kept in Ukrainian and written twice a day. It is left untranslated on purpose: it changes every twelve hours, and maintaining two versions of a live record is how the two versions start to disagree. The English summary above carries the current figures and what they mean; this section is the evidence behind them, newest first, each item with its source link.</div>
     <ul class="delta">
+      <li><div class="txt">
+        <p><b>Уперше за всі ці тижні названо строк — і це головне, що змінилось.</b> Криміналістична лабораторія поліції Непалу каже, що на всю роботу з ДНК потрібно приблизно <b>місяць</b>, а мета — завершити її <b>в межах картіка</b>. Картік це непальський місяць, який за нашим календарем припадає приблизно на середину жовтня — середину листопада. До вчорашнього дня жодного строку не називав ніхто. <span class="badge b-ok">Підтв.</span></p>
+        <p><b>І там же пояснено, чому так довго.</b> Спершу треба зробити профіль кожного тіла окремо, і лише потім цей профіль можна звіряти зі зразками, які здали родини. Тобто більша частина роботи — це не саме порівняння, а підготовка до нього. Саме через це цифра впізнаних майже не рухається, і тепер причина названа вголос, а не лише припущена нами. <span class="badge b-ok">Підтв.</span></p>
+        <p><b>Як сторінка з цим поводиться.</b> Це строк для всього масиву, а не дата відповіді про конкретну людину — з нього не можна порахувати, коли черга дійде до когось одного. І це план, а плани зсуваються; цей теж може. Але між «невідомо, скільки чекати» і «названо приблизно місяць» різниця велика, і вона на користь тих, хто чекає. <span class="badge b-ok">Підтв.</span></p>
+        <p class="src"><a href="https://nagariknews.nagariknetwork.com/social-affairs/f-73-70.html">Криміналістична лабораторія поліції Непалу через Nagarik News, 13.09, 18:30</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Лабораторій стане більше — але де саме, джерела кажуть різне.</b> Позавчора поліція говорила про другу лабораторію в <b>Хетауді</b>, «протягом тижня». Вчорашній матеріал називає інші міста — <b>Дхаран і Непалґандж</b>. Сторінка не обирає між цими варіантами і лишає обидва з датами. <span class="badge b-mid">Середня</span></p>
+        <p><b>Спільне в них важливіше за географію.</b> Роботу виносять за межі однієї лабораторії в Катманду — а саме її пропускна здатність і була вузьким місцем. Окремо підтверджено, що до Непалу приїхали групи фахівців із Китаю, Індії та Південної Кореї. <span class="badge b-ok">Підтв.</span></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>А цифри за добу не змінились, і це теж варто сказати прямо.</b> Родинам повернуто 103 — той рух, що стався 12–13 вересня, поки не продовжився. Зразків із тіл лишається 1 286, від родин 1 846, поховано після всіх процедур упізнання 1 230 — ті самі числа, що й учора. Зведення NDRRMA не виходять шосту добу, останнє з цифрами лишається за ранок 11 вересня. Живими за добу нікого нового не знайшли. <span class="badge b-ok">Підтв.</span></p>
+        <p><b>Про громадян України нового немає.</b> Нових заяв української сторони не було, і в опублікованих переліках загиблих, постраждалих та впізнаних громадян України немає. <span class="badge b-ok">Підтв.</span></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Маленьке застереження для тих, хто читає новини.</b> Цими днями у великих виданнях трапляються матеріали зі свіжою датою, але з цифрами «1 386 знайдено, 5 130 шукають» — це цифри зі зведення за 11 вересня, просто перенесені під новішу дату. Вони не помилкові, вони просто не нові. Ця сторінка так не робить: якщо свіжого зведення немає, ми пишемо, що його немає, і лишаємо стару дату біля старої цифри. <span class="badge b-ok">Підтв.</span></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Цифра зрушила. Після чотирьох діб без руху родинам повернуто не 102 людини, а 103.</b> Це видно у двох непальських виданнях незалежно одне від одного, обидва за даними поліції Непалу: myRepublica за 12 вересня і Onlinekhabar за 13 вересня. Одна людина повернулась до своїх. Одна родина цього тижня отримала відповідь. <span class="badge b-ok">Підтв.</span></p>
+        <p><b>Як це читати чесно.</b> Це не «пішло швидше» — це один рух за пʼять діб. Але це рух, і він означає, що механізм упізнання не зупинився. Саме цього ми не могли сказати напевно останні чотири дні, і тепер можемо. <span class="badge b-ok">Підтв.</span></p>
+        <p class="src"><a href="https://myrepublica.nagariknetwork.com/news/death-toll-from-bhotekoshi-flood-reaches-1386-over-4000-remain-missing-12-24.html">myRepublica, 12.09</a> · <a href="https://english.onlinekhabar.com/rasuwa-flood-3000-dna.html">Onlinekhabar, 13.09</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Ми дивились не в те вікно, і це треба сказати про себе так само прямо, як ми говоримо про інших.</b> Зведення NDRRMA справді не виходять — сьогодні пʼята доба, останнє з цифрами лишається за ранок 11 вересня. Ми обіцяли сказати прямо, коли вони відновляться. Вони не відновились, і ми це кажемо. <span class="badge b-ok">Підтв.</span></p>
+        <p><b>Але водночас зʼясувалось інше, і це наша похибка.</b> Увесь цей час цифри публікувала поліція Непалу — окремим каналом, зі своїми датами, і там дані свіжіші. Станом на 12–13 вересня за поліцією: знайдено <b>1 388</b> тіл; у поліцейському переліку тих, кого шукають, — <b>4 089</b>; поховано після всіх процедур упізнання — <b>1 230</b>; повернуто родинам — <b>103</b>. «Немає зведення» виявилось не тим самим, що «немає даних», і сторінка додає поліцейський канал до постійної перевірки. <span class="badge b-ok">Підтв.</span></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Уперше названо швидкість лабораторії — і це, мабуть, найважливіше число за тиждень.</b> Центральна лабораторія обробляє <b>25–30 зразків на добу</b>. Всього перевірено «понад 400». Зібрано <b>3 132</b> зразки: 1 846 від родин і 1 286 із тіл. Працюють чотири апарати. Один звичайний зразок — близько 90 хвилин, але видобути придатний матеріал із кістки чи зуба — до чотирьох діб. <span class="badge b-ok">Підтв.</span></p>
+        <p><b>Що це пояснює.</b> Тепер видно, чому цифра впізнаних стоїть майже нерухомо. Справа не в тому, що хтось не працює: зразків тисячі, а пропускна здатність — десятки на добу. Судово-медичний експерт Трибхуванського університету, лікар Ґопал Чаудхарі, ще 3 вересня сказав про це прямо — аналіз ДНК може тривати місяцями, бо один зразок часом доводиться звіряти з кровʼю кількох родин. Сторінка не називає дати, коли черга дійде до конкретної людини, і радить не рахувати таких дат нікому: у цій арифметиці надто багато невідомих, а помилка в ній коштує дорого. <span class="badge b-ok">Підтв.</span></p>
+        <p><b>Одне полегшення все ж є.</b> У Хетауді розгортають <b>другу лабораторію</b> — за словами поліції, протягом тижня. Крім того, в непальських лабораторіях допомагають фахівці з Індії, Китаю, Південної Кореї та Сінгапуру. Про те, чи звіряють між собою профілі непальська й китайська сторони, з цього не випливає нічого — присутність фахівців і обмін даними це різні речі, і питання лишається відкритим. <span class="badge b-mid">Середня</span></p>
+        <p class="src"><a href="https://radionepalonline.com/en/2026/09/12/435868.html">Radio Nepal, 12.09</a> · <a href="https://peoplesreview.com.np/2026/09/13/bhotekoshi-flood-police-use-three-methods-to-identify-bodies/">Peoples Review, 13.09</a> · <a href="https://english.nepalnews.com/s/feature/bodies-buried-identities-still-unresolved/">Nepalnews, 03.09 — про строки</a></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Упізнають трьома способами, а не одним — і це важливо знати саме нам.</b> ДНК лише один із трьох. Другий — відбитки пальців, які звіряють із базою національних посвідчень: швидше й дешевше, але не працює на сильно пошкоджених тілах і там, де немає рук. Третій — <b>звіряння фотографій</b>: поліція запустила окрему програму, яка порівнює фотографії зниклих людей із фотографіями знайдених тіл. <span class="badge b-ok">Підтв.</span></p>
+        <p><b>Чому це має значення для родин.</b> Фотографії, прикмети, татуювання, шрами, прикраси й деталі одягу, які родини передавали, лежать не «про запас» — це окремий робочий канал упізнання, і він той самий, який зараз працює на китайському боці переходу. Тобто передане працює, навіть поки черга на ДНК стоїть. <span class="badge b-ok">Підтв.</span></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>І те, що варто знати кожному, хто прочитає «поховано 1 230».</b> Поховання тут не означає кінець упізнання. За чинною директивою матеріали для впізнання зберігають <b>до 12 років</b>, і в самій директиві записано: навіть якщо тіло поховане, шлях до впізнання не має закриватись. Тимчасове поховання застосували тому, що не було де зберігати тіла, а не тому, що впізнання припинили. <span class="badge b-ok">Підтв.</span></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Дрібниця, яка пояснює, чому загальні цифри зразків весь час різні.</b> Число зразків від родин росте майже щодня: 1 412 або 1 616 за 10 вересня, 1 779 за 12-те, 1 846 за 13-те. А число зразків, узятих із тіл, не змінюється вже кілька днів — 1 286. Разом із тим, що знайдено 1 388 тіл, а 103 вже повернуто родинам, це складається майже точно: 1 286 плюс 103 дає 1 389. Схоже, зразки взяли практично з усіх знайдених, і вузьке місце справді тільки в обробці. Сторінка подає це як власне спостереження за числами, а не як офіційне твердження. <span class="badge b-mid">Середня</span></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Про громадян України за добу нічого нового немає.</b> Нових заяв української сторони не було, у жодному з опублікованих переліків загиблих, постраждалих і впізнаних громадян України немає, живими за добу нікого нового не знайшли. <span class="badge b-ok">Підтв.</span></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Четверта доба без свіжого офіційного зведення — і це варто назвати вголос.</b> Останнє зведення NDRRMA з цифрами вийшло вранці 11 вересня: знайдено 1 385, шукають 5 130, врятовано й вивезено 13 676. Відтоді нових зведень не публікували. До 11 вересня вони виходили майже щодня, тож ідеться про зміну самого ритму звітності, а не про одну пропущену добу. <span class="badge b-ok">Підтв.</span></p>
+        <p><b>Чого це не означає, і це головне.</b> Жодної заяви про згортання пошуку, про перехід операції в іншу фазу або про припинення робіт не було — ні від влади Непалу, ні від китайської сторони. Пауза у звітності і пауза в пошуку — різні речі, і з першої не випливає друга. Так само з цієї паузи не випливає, що цифри змінились: поки нового зведення немає, чинними лишаються цифри від 11 вересня. <span class="badge b-ok">Підтв.</span></p>
+        <p><b>Як сторінка з цим працює далі.</b> Ми продовжуємо перевіряти двічі на добу і фіксуємо відсутність зведення як окремий факт, із датою, а не переставляємо старі цифри під нову дату, ніби вони свіжі. Якщо ритм звітності зміниться остаточно, ми скажемо про це прямо, і так само прямо скажемо, якщо зведення відновляться. <span class="badge b-ok">Підтв.</span></p>
+      </div></li>
+      <li><div class="txt">
+        <p><b>Упізнання стоїть восьму добу.</b> Родинам повернуто 102 людини, і ця цифра не змінювалась з 8 вересня — це найдовша пауза за весь час спостереження. Вона узгоджується з тим, що відомо про чергу: майже всіх, кого знаходять, можна впізнати лише за ДНК, зразків від родин зібрано більше, ніж від загиблих, а офіційний строк обробки — від місяця до півтора. Нових заяв української сторони немає, громадян України немає в опублікованих переліках загиблих, постраждалих і впізнаних. Живими за добу нікого нового не знайшли. <span class="badge b-ok">Підтв.</span></p>
+      </div></li>
       <li><div class="txt">
         <p><b>За всю добу 13 вересня змін немає, і це той випадок, коли краще сказати коротко.</b> <i>Перевірено повторно ввечері, о 23:15 за Катманду: нових зведень так і не виходило.</i> Свіжого зведення не публікували — останнє й далі NDRRMA за ранок 11 вересня: знайдено 1 385, шукають 5 130, врятовано й вивезено 13 676. Родинам повернуто 102 — сьома доба без руху, останній раз цифра змінювалась 8 вересня. Живими нікого нового не знайшли. Нових заяв української сторони немає, громадян України немає в опублікованих переліках загиблих, постраждалих і впізнаних. <span class="badge b-ok">Підтв.</span></p>
         <p><b>Одне закривається саме собою: попередження про паводки добігає кінця.</b> Воно діяло три дні, з 10 по 13 вересня, і Расува, Нувакот та Дхадінг були в переліку. За цей час про зупинку чи згортання пошукових робіт ніхто не оголошував. Сторінка не стверджує, що погода зовсім не вплинула — лише те, що жодної заяви про припинення робіт не було. <span class="badge b-ok">Підтв.</span></p>
@@ -1081,7 +1303,7 @@ footer p{grid-column:2; font-size:.775rem; color:var(--muted); line-height:1.6; 
 </section>
 
 <!-- ─────────── УКРАЇНЦІ ─────────── -->
-<section class="block" id="ukrainci">
+<section class="block uk-only" id="ukrainci">
   <div class="label">Громадяни<br>України</div>
   <div class="body">
     <div class="focus">
@@ -1111,7 +1333,7 @@ footer p{grid-column:2; font-size:.775rem; color:var(--muted); line-height:1.6; 
 </section>
 
 <!-- ─────────── ЩО РОБИТИ ─────────── -->
-<section class="block" id="scho-robyty">
+<section class="block uk-only" id="scho-robyty">
   <div class="label">Що робити<br>родині</div>
   <div class="body">
     <p>Порядок, зібраний з офіційних повідомлень МЗС України, посольств в Індії та КНР і поліції Непалу. Кроки не залежать один від одного — робити можна паралельно.</p>
@@ -1193,7 +1415,7 @@ footer p{grid-column:2; font-size:.775rem; color:var(--muted); line-height:1.6; 
 </section>
 
 <!-- ─────────── ГРУПА ─────────── -->
-<section class="block" id="grupa">
+<section class="block uk-only" id="grupa">
   <div class="label">Група<br>Блонської</div>
   <div class="body">
     <p>За структурою МЗС зниклі громадяни України — це дві туристичні групи та окремо одна громадянка, що подорожувала у складі іноземної групи. Одну з груп вів організатор поїздки, і саме її учасники були на пункті пропуску в момент повені.</p>
@@ -1205,7 +1427,7 @@ footer p{grid-column:2; font-size:.775rem; color:var(--muted); line-height:1.6; 
 </section>
 
 <!-- ─────────── ЗОНА ─────────── -->
-<section class="block" id="zona">
+<section class="block uk-only" id="zona">
   <div class="label">Зона<br>пошуків</div>
   <div class="body">
     <div class="flowcap"><span>↑ витік · Тибет</span><span>вниз за течією · Непал ↓</span></div>
@@ -1252,7 +1474,7 @@ footer p{grid-column:2; font-size:.775rem; color:var(--muted); line-height:1.6; 
 </section>
 
 <!-- ─────────── ЦИФРИ ─────────── -->
-<section class="block" id="cyfry">
+<section class="block uk-only" id="cyfry">
   <div class="label">Масштаб</div>
   <div class="body">
     <div class="figs">
@@ -1263,7 +1485,11 @@ footer p{grid-column:2; font-size:.775rem; color:var(--muted); line-height:1.6; 
       <div class="fig"><span class="n">щонайменше 5</span><span class="k">знайшли живими, у чотирьох різних місцях: троє в тунелях ГЕС, жінка в будинку в Нувакоті, громадянин США в Дунче</span><span class="w">Армія Непалу і МЗС Непалу · 04–06.09</span></div>
       <div class="fig"><span class="n">35</span><span class="k">країн, чиї громадяни лишаються зниклими; таких людей близько 600, урятовано понад 300</span><span class="w">МЗС Непалу · 07.09 14:00</span></div>
       <div class="fig"><span class="n">3 071</span><span class="k">не знайдені в самому районі Расува, з них 1 262 — туристи й люди з інших районів; живими там урятували 1 313</span><span class="w">Районна адміністрація Расуви · 06.09</span></div>
-      <div class="fig"><span class="n">102</span><span class="k">повернуто родинам; тримається без змін третю добу — 8, 9 і 10 вересня однаково</span><span class="w">NDRRMA · 09.09 18:00</span></div>
+      <div class="fig"><span class="n">≈ місяць</span><span class="k">стільки, за словами криміналістичної лабораторії поліції, потрібно на всю роботу з ДНК; мета — завершити в межах картіка, тобто приблизно до середини листопада. Це строк для всього масиву, а не дата відповіді про конкретну людину</span><span class="w">Лабораторія поліції Непалу · 13.09</span></div>
+      <div class="fig"><span class="n">103</span><span class="k">повернуто родинам; цифра зрушила 12–13 вересня після чотирьох діб без руху, далі поки не змінювалась</span><span class="w">Поліція Непалу через myRepublica і Onlinekhabar · 12–13.09</span></div>
+      <div class="fig"><span class="n">25–30 на добу</span><span class="k">стільки зразків ДНК обробляє центральна лабораторія; зібрано 3 132, перевірено понад 400. У Хетауді розгортають другу лабораторію</span><span class="w">Поліція Непалу · 12–13.09</span></div>
+      <div class="fig"><span class="n">3 способи</span><span class="k">упізнання: ДНК, відбитки пальців за базою національних посвідчень і звіряння фотографій окремою програмою — тобто передані фото й прикмети працюють окремим каналом</span><span class="w">Поліція Непалу · 12–13.09</span></div>
+      <div class="fig"><span class="n">до 12 років</span><span class="k">стільки за директивою зберігають матеріали для впізнання: поховання не закриває шлях упізнати людину пізніше</span><span class="w">Директива, через Nepalnews · 03.09</span></div>
       <div class="fig"><span class="n">3 обліки</span><span class="k">трьох державних джерел дають різні числа тих, кого шукають: поліція 4 077, NDRRMA 5 132, портал звернень при Кабінеті Прем'єра 12 641 — це різні переліки з різними правилами внесення, а не три версії однієї цифри</span><span class="w">Поліція, NDRRMA і портал · 10.09</span></div>
       <div class="fig"><span class="n">519 і 261</span><span class="k">зниклих на китайському боці, з них громадян інших країн із 23 країн; за пʼять днів загальна цифра зменшилась на 27, а кількість іноземців не змінилась</span><span class="w">Китайська сторона через Reuters · 06.09</span></div>
       <div class="fig"><span class="n">993</span><span class="k">особисті речі зібрані на китайському боці; там людей впізнають за відбитками пальців і особливими прикметами — опублікованої процедури ДНК Пекін поки не давав</span><span class="w">Reuters · 06.09</span></div>
@@ -1296,7 +1522,7 @@ footer p{grid-column:2; font-size:.775rem; color:var(--muted); line-height:1.6; 
 </section>
 
 <!-- ─────────── ПРОТИРІЧЧЯ ─────────── -->
-<section class="block" id="clash">
+<section class="block uk-only" id="clash">
   <div class="label">Протиріччя</div>
   <div class="body">
     <div class="clash">
@@ -1411,7 +1637,7 @@ footer p{grid-column:2; font-size:.775rem; color:var(--muted); line-height:1.6; 
 </section>
 
 <!-- ─────────── РУЧНА ПЕРЕВІРКА ─────────── -->
-<section class="block" id="vruchnu">
+<section class="block uk-only" id="vruchnu">
   <div class="label">Перевірити<br>вручну</div>
   <div class="body">
     <p>Це не биті посилання, а джерела, до яких немає програмного доступу. З телефона відкриваються.</p>
@@ -1427,7 +1653,7 @@ footer p{grid-column:2; font-size:.775rem; color:var(--muted); line-height:1.6; 
 </section>
 
 <!-- ─────────── ДЖЕРЕЛА ─────────── -->
-<section class="block" id="dzherela">
+<section class="block uk-only" id="dzherela">
   <div class="label">Джерельна<br>база</div>
   <div class="body">
     <div class="tbl"><table>
@@ -1490,9 +1716,23 @@ footer p{grid-column:2; font-size:.775rem; color:var(--muted); line-height:1.6; 
 
 <!-- ─────────── ІСТОРІЯ ─────────── -->
 <section class="block" id="history">
-  <div class="label">Історія<br>оновлень</div>
+  <div class="label uk-only">Історія<br>оновлень</div>
+  <div class="label en-only">Update<br>history</div>
   <div class="body">
+    <div class="uk-log-note en-only">Every check since the page began, newest first, in Ukrainian. Kept in full so that anything the page has ever said can be found again with its date — including the things it later corrected.</div>
     <ul class="hist">
+      <li>
+        <time>15.09.2026 · 09:00 Київ · 11:45 Катманду · ранковий зріз</time>
+        Головне: уперше названо строк. Криміналістична лабораторія поліції Непалу каже, що на всю роботу з ДНК потрібно приблизно місяць, а мета — завершити її в межах картіка, тобто орієнтовно до середини листопада. Там же пояснено, чому так довго: спершу треба зробити профіль кожного тіла окремо і лише потім звіряти його зі зразками родин, тож більша частина роботи — це підготовка, а не саме порівняння. Це строк для всього масиву, а не дата відповіді про конкретну людину, і це план, який може зсунутись. Лабораторій стане більше, але джерела називають різні міста: позавчора поліція казала про Хетауду «протягом тижня», вчорашній матеріал називає Дхаран і Непалґандж; сторінка лишає обидва варіанти. Підтверджено приїзд груп фахівців із Китаю, Індії та Південної Кореї. Цифри за добу не змінились: повернуто родинам 103, зразків із тіл 1 286, від родин 1 846, поховано 1 230; зведення NDRRMA не виходять шосту добу. Про громадян України нового немає. Окремо застереження: у частини видань цими днями виходять матеріали зі свіжою датою, але з цифрами зі зведення за 11 вересня.
+      </li>
+      <li>
+        <time>14.09.2026 · 20:30 Київ · 23:15 Катманду · вечірній зріз</time>
+        Головне: цифра повернутих родинам зрушила після чотирьох діб — 103 замість 102, за даними поліції Непалу у двох виданнях незалежно (myRepublica 12.09, Onlinekhabar 13.09). Окремо сторінка виправляє власну похибку: зведення NDRRMA справді не виходять пʼяту добу, але весь цей час цифри публікувала поліція окремим каналом, і там дані свіжіші — знайдено 1 388, у поліцейському переліку тих, кого шукають, 4 089, поховано після процедур 1 230, повернуто родинам 103. Уперше названо швидкість лабораторії: 25–30 зразків на добу, перевірено понад 400, зібрано 3 132 зразки (1 846 від родин, 1 286 із тіл), чотири апарати, звичайний зразок близько 90 хвилин, видобування з кістки чи зуба до чотирьох діб; у Хетауді розгортають другу лабораторію протягом тижня, допомагають фахівці з Індії, Китаю, Південної Кореї та Сінгапуру. Це і пояснює нерухомість цифри впізнаних. Упізнають трьома способами — ДНК, відбитки пальців за базою національних посвідчень і звіряння фотографій окремою програмою, тобто передані родинами фото й прикмети працюють окремим каналом. Поховання не закриває впізнання: матеріали зберігають до 12 років. Про громадян України нового немає.
+      </li>
+      <li>
+        <time>14.09.2026 · 09:30 Київ · 12:15 Катманду · ранковий зріз</time>
+        Четверта доба без свіжого офіційного зведення: останнє з цифрами вийшло вранці 11 вересня, до того вони виходили майже щодня. Заяв про згортання пошуку чи перехід операції в іншу фазу не було — ні від влади Непалу, ні від китайської сторони, тож пауза у звітності не означає паузи в пошуку. Чинними лишаються цифри від 11 вересня: знайдено 1 385, шукають 5 130, врятовано й вивезено 13 676. Упізнання стоїть восьму добу на 102 — найдовша пауза за весь час спостереження. Нових заяв української сторони немає.
+      </li>
       <li>
         <time>13.09.2026 · 20:30 Київ · 23:15 Катманду · вечірній зріз</time>
         Перевірено повторно: за добу не вийшло жодного нового зведення. Останнє лишається NDRRMA за ранок 11 вересня. Упізнання не рухалось — 102 людини, повернуті родинам, сьома доба поспіль. Живими нікого нового не знайшли, нових заяв української сторони немає, заяв про згортання чи перехід пошуку в іншу фазу теж не було.
@@ -1647,8 +1887,8 @@ footer p{grid-column:2; font-size:.775rem; color:var(--muted); line-height:1.6; 
 
 <script type="application/json" id="report-state">
 {
-  "checked_at_kyiv": "2026-09-13T20:30+03:00",
-  "checked_at_ktm": "2026-09-13T23:15+05:45",
+  "checked_at_kyiv": "2026-09-15T09:00+03:00",
+  "checked_at_ktm": "2026-09-15T11:45+05:45",
   "scope": "all Ukrainian families; no head-count published by design",
   "personal_data_published": false,
   "ukrainians_list_source": "tour operators, per MFA clarification 31.08 — not a border record",
@@ -1691,6 +1931,102 @@ footer p{grid-column:2; font-size:.775rem; color:var(--muted); line-height:1.6; 
     "districts_included_search_area": ["Rasuwa", "Nuwakot", "Dhading"],
     "any_announced_suspension_of_search": false,
     "page_does_not_claim_weather_had_no_effect": true
+  },
+  "lab_timeline_named_1309": {
+    "first_timeline_ever_stated": true,
+    "estimate": "about one month for profiling, testing and matching",
+    "target_completion": "within Kartik (approx. mid-October to mid-November 2026)",
+    "reason_given": "body profiles must be built first; only then can they be compared against relatives' samples, so most of the work is preparation rather than comparison",
+    "scope": "the whole caseload, not a date for any individual person",
+    "page_treats_it_as": "a plan that may slip, not a promise",
+    "source": "Nepal Police forensic laboratory via Nagarik News, 2026-09-13 18:30 (28 Bhadra 2083, Sunday)"
+  },
+  "additional_labs_conflicting_1509": {
+    "variant_a": {"city": "Hetauda", "timing": "within one week", "as_of": "2026-09-12 to 2026-09-13"},
+    "variant_b": {"cities": ["Dharan", "Nepalgunj"], "as_of": "2026-09-13"},
+    "page_picks_neither": true,
+    "common_ground": "testing is being moved beyond the single Kathmandu central laboratory, whose throughput was the bottleneck",
+    "foreign_expert_teams_arrived": ["China", "India", "South Korea"]
+  },
+  "no_change_1509": {
+    "returned_to_families": 103,
+    "samples_from_bodies": 1286,
+    "samples_from_relatives": 1846,
+    "buried_after_procedures": 1230,
+    "ndrrma_pause_days": 6,
+    "ndrrma_last_with_figures": "2026-09-11 morning",
+    "found_alive_new": 0,
+    "ukrainian_citizens_news": "none"
+  },
+  "stale_figures_under_fresh_dates_1509": {
+    "pattern": "articles published 2026-09-12 onward carrying 1386 found and 5130 under search, which are the 2026-09-11 briefing figures",
+    "not_false_just_not_new": true,
+    "page_policy": "when there is no fresh briefing the page says so and keeps the old date beside the old figure"
+  },
+  "identification_moved_1409": {
+    "returned_to_families": 103,
+    "previous": 102,
+    "previous_static_since": "2026-09-08",
+    "days_without_movement_before": 4,
+    "sources": ["myRepublica 2026-09-12", "Onlinekhabar 2026-09-13"],
+    "both_cite": "Nepal Police figures",
+    "note": "one movement in five days; not an acceleration, but the mechanism is not stopped"
+  },
+  "police_channel_found_1409": {
+    "self_correction": "the page had been watching only NDRRMA briefings; Nepal Police published figures throughout on a separate channel with fresher data",
+    "bodies_found": 1388,
+    "police_missing_register": 4089,
+    "buried_after_procedures": 1230,
+    "returned_to_families": 103,
+    "as_of": "2026-09-12 to 2026-09-13",
+    "ndrrma_briefings_still_paused": true,
+    "ndrrma_last_with_figures": "2026-09-11 morning",
+    "days_of_ndrrma_pause": 5,
+    "action_taken": "police channel added to the permanent check list"
+  },
+  "lab_throughput_1409": {
+    "samples_per_day_central_lab": "25-30",
+    "samples_tested_so_far": "over 400",
+    "samples_collected_total": 3132,
+    "from_relatives": 1846,
+    "from_bodies": 1286,
+    "machines": 4,
+    "time_routine_sample_minutes": 90,
+    "time_extraction_from_bone_or_teeth_days": 4,
+    "second_lab": {"location": "Hetauda", "promised_within": "one week", "as_stated_by": "Nepal Police"},
+    "foreign_specialists_assisting": ["India", "China", "South Korea", "Singapore"],
+    "matching_software": "CODIS",
+    "forensic_expert_on_duration": "Dr Gopal Chaudhary, TU Teaching Hospital, 2026-09-03: DNA analysis can take months; a sample may need matching against blood from more than one family",
+    "page_refuses_to_forecast_a_date": true,
+    "cross_matching_nepal_china": "still unanswered; presence of Chinese specialists in Nepali labs is not evidence of profile exchange"
+  },
+  "three_identification_methods_1409": {
+    "methods": ["DNA", "fingerprints against the national ID database", "photo matching via Disaster Victim Identification software"],
+    "fingerprint_limits": "faster and cheaper, but unusable on badly decomposed remains or bodies without hands",
+    "practical_note_for_families": "photographs and identifying features submitted by families are a live working channel, the same one operating on the Chinese side, and it works while the DNA queue stands",
+    "source": "Central Police Spokesperson DIG Abinarayan Kafle via Radio Nepal 2026-09-12 and Peoples Review 2026-09-13"
+  },
+  "burial_does_not_close_identification_1409": {
+    "evidence_retained_years": 12,
+    "directive_wording": "even if a body is buried, the door to identification must not close",
+    "reason_for_temporary_burial": "no cold storage capacity, not cessation of identification",
+    "source": "amended directive via Nepalnews feature, 2026-09-03"
+  },
+  "sample_arithmetic_1409": {
+    "from_bodies_static_at": 1286,
+    "returned_to_families": 103,
+    "sum": 1389,
+    "bodies_found": 1388,
+    "observation": "samples appear to have been taken from effectively every recovered body, so the bottleneck is processing alone",
+    "status": "page's own observation on published numbers, not an official statement"
+  },
+  "official_reporting_pause_1409": {
+    "last_briefing_with_figures": "2026-09-11 morning",
+    "days_without_fresh_briefing": 4,
+    "cadence_before": "almost daily",
+    "any_announced_wind_down_or_phase_change": false,
+    "figures_still_current": {"found": 1385, "under_search": 5130, "rescued_or_evacuated": 13676},
+    "page_policy": "absence of a briefing is recorded as its own dated fact; old figures are never restamped with a new date"
   },
   "identification_stalled_1309": {
     "returned_to_families": 102,
@@ -2028,6 +2364,9 @@ footer p{grid-column:2; font-size:.775rem; color:var(--muted); line-height:1.6; 
     "2026-09-01 універсальна версія: блок #ukrainci замість персонального фокусу, новий розділ #scho-robyty з процедурним треком і контактами",
     "2026-09-01T20:19+03:00 вечірній зріз: сьомий день тунельної операції без успішних порятунків, ~600 імовірно в тунелях, 894 без звʼязку на 12 обʼєктах",
     "2026-09-04T09:10+03:00 ранковий зріз: ДНК обовʼязкова для передачі тіла, другий контактний офіцер, тип аналізу для закордону; два офіційні строки — 1–1,5 і 2–3 місяці; Чітван: 355 знайдених, 12 упізнаних, 836 родичів у пошуку",
+    "2026-09-15T09:00+03:00 ранковий зріз: головне — уперше названо строк: криміналістична лабораторія поліції Непалу каже, що на всю роботу з ДНК потрібно приблизно місяць, мета завершити в межах картіка (приблизно середина жовтня — середина листопада); причина тривалості названа прямо — спершу треба зробити профіль кожного тіла і лише потім звіряти зі зразками родин, тобто більша частина роботи це підготовка; це строк для всього масиву, а не дата відповіді про конкретну людину, і це план, який може зсунутись; лабораторій стане більше, але джерела розходяться — позавчора поліція казала про Хетауду протягом тижня, матеріал за 13.09 називає Дхаран і Непалґандж, сторінка лишає обидва; підтверджено приїзд груп фахівців із Китаю, Індії та Південної Кореї; за добу цифри не змінились — повернуто родинам 103, зразків із тіл 1286, від родин 1846, поховано після процедур 1230; зведення NDRRMA не виходять шосту добу, останнє з цифрами за ранок 11.09; живими нікого нового не знайшли; про громадян України нового немає; окреме застереження — частина видань цими днями публікує матеріали зі свіжою датою, але з цифрами 1386 і 5130 зі зведення за 11.09, тобто старі цифри під новою датою",
+    "2026-09-14T20:30+03:00 вечірній зріз: цифра повернутих родинам зрушила після чотирьох діб — 103 замість 102, підтверджено двома непальськими виданнями незалежно за даними поліції (myRepublica 12.09, Onlinekhabar 13.09); сторінка виправляє власну похибку — зведення NDRRMA не виходять пʼяту добу, але поліція весь цей час публікувала цифри окремим каналом і там дані свіжіші: знайдено 1388, поліцейський перелік тих кого шукають 4089, поховано після процедур 1230, повернуто родинам 103; уперше названо пропускну здатність лабораторії — 25–30 зразків на добу, перевірено понад 400, зібрано 3132 (1846 від родин, 1286 із тіл), чотири апарати, звичайний зразок близько 90 хвилин, видобування з кістки чи зуба до чотирьох діб, у Хетауді розгортають другу лабораторію протягом тижня, допомагають фахівці з Індії, Китаю, Південної Кореї та Сінгапуру; судмедексперт Ґопал Чаудхарі ще 03.09 казав, що аналіз може тривати місяцями; упізнання ведуть трьома способами — ДНК, відбитки пальців за базою національних посвідчень і звіряння фотографій окремою програмою, тобто передані родинами фото й прикмети працюють окремим каналом, тим самим що на китайському боці; поховання не закриває впізнання, матеріали зберігають до 12 років; зразків із тіл 1286 не змінюється кілька діб, і 1286 плюс 103 майже дорівнює 1388 знайденим, тобто зразки взяли практично з усіх; питання про звіряння профілів між Непалом і Китаєм лишається відкритим — присутність китайських фахівців у лабораторіях цього не означає; про громадян України нового немає",
+    "2026-09-14T09:30+03:00 ранковий зріз: четверта доба без свіжого офіційного зведення — останнє з цифрами вийшло вранці 11.09, до того вони виходили майже щодня, тобто змінився сам ритм звітності; жодної заяви про згортання пошуку чи перехід операції в іншу фазу не було ні від влади Непалу, ні від китайської сторони; пауза у звітності не означає паузи в пошуку, і з неї не випливає, що цифри змінились — чинними лишаються цифри від 11.09: знайдено 1385, шукають 5130, врятовано й вивезено 13676; сторінка фіксує відсутність зведення як окремий факт із датою і не переставляє старі цифри під нову дату; упізнання стоїть восьму добу на 102, це найдовша пауза за весь час спостереження; нових заяв української сторони немає",
     "2026-09-13T20:30+03:00 вечірній зріз: перевірено повторно, за добу не вийшло жодного нового зведення; останнє лишається NDRRMA за ранок 11.09; упізнання не рухалось — 102, сьома доба; живими нікого нового не знайшли; нових заяв української сторони немає; заяв про згортання чи перехід пошуку в іншу фазу не було",
     "2026-09-13T09:30+03:00 ранковий зріз: змін немає; свіжого зведення не публікували, останнє NDRRMA за ранок 11.09 — знайдено 1385, шукають 5130, врятовано й вивезено 13676; родинам повернуто 102, сьома доба без руху, останній раз цифра змінювалась 08.09; живими нікого нового не знайшли; нових заяв української сторони немає; попередження про паводки, що діяло 10–13.09 і включало Расуву, Нувакот і Дхадінг, добігає кінця, і за цей час про зупинку чи згортання робіт не оголошували",
     "2026-09-12T20:30+03:00 вечірній зріз: перший незалежний опис китайського боку переходу — Китай провів організований тур для міжнародних журналістів, Reuters описала, що пʼятиповерхової будівлі митниці немає зовсім, на місці переходу поле намулу, видно частину водонапірної вежі, працюють екскаватори, лопати й георадар; кількості задіяних людей і строків китайська сторона не називала; цифри китайського боку на 06.09 — 43 загиблих, 519 зниклих, з них 261 громадянин інших країн із 23 країн, проти 546 і тих самих 261 у повідомленні посольства України в КНР від 01.09; на китайському боці впізнають за відбитками пальців і особливими прикметами включно з татуюваннями, зібрано 993 особисті речі; Пекін не оприлюднив процедури ДНК-ідентифікації і не відповів, чи передадуть родинам записи з камер переходу — це друге незалежне підтвердження позиції щодо камер; практичний висновок — на китайському напрямку зараз працює саме канал прикмет і фото, а не ДНК; свіжого зведення за 12.09 не було, упізнання лишається на 102, шоста доба без руху; нових заяв української сторони немає",
@@ -2058,6 +2397,35 @@ footer p{grid-column:2; font-size:.775rem; color:var(--muted); line-height:1.6; 
     "2026-09-02T11:50+03:00 ранковий зріз: перевірено записи імміграції за 26.08 (BBC), час 8:35 підтверджено незалежно через CBS; геометрія переходу; нове протиріччя про час приходу води; 1127 тіл, 95 передано родичам, 911 невпізнаних із фото; тіла в Індії; України немає в розподілі врятованих іноземців"
   ]
 }
+</script>
+<script>
+(function(){
+  var root = document.documentElement;
+  var btns = document.querySelectorAll('.langtog button');
+  function apply(lang){
+    root.setAttribute('data-lang', lang);
+    root.setAttribute('lang', lang === 'en' ? 'en' : 'uk');
+    for (var i = 0; i < btns.length; i++){
+      btns[i].setAttribute('aria-pressed', String(btns[i].getAttribute('data-lang') === lang));
+    }
+    try { localStorage.setItem('mn-lang', lang); } catch (e) {}
+  }
+  var saved = null;
+  try { saved = localStorage.getItem('mn-lang'); } catch (e) {}
+  if (saved !== 'uk' && saved !== 'en'){
+    // за замовчуванням українська; англійська лише тоді, коли в браузері немає української зовсім
+    var prefs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'uk']);
+    var hasUk = false;
+    for (var j = 0; j < prefs.length; j++){
+      if (/^(uk|ru)/i.test(prefs[j] || '')) { hasUk = true; break; }
+    }
+    saved = hasUk ? 'uk' : 'en';
+  }
+  apply(saved);
+  for (var k = 0; k < btns.length; k++){
+    btns[k].addEventListener('click', function(){ apply(this.getAttribute('data-lang')); });
+  }
+})();
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
 </body>
