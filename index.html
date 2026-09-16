@@ -27,6 +27,33 @@
 }
 .about .body > h3:first-child{margin-top:0}
 .about .body > p{margin:0 0 10px}
+.about .tiers{list-style:none; margin:2px 0 4px; padding:0}
+.about .tiers > li{
+  display:grid; grid-template-columns:auto minmax(0,1fr); column-gap:12px;
+  padding:7px 0; border-top:1px solid var(--hair); align-items:baseline;
+}
+.about .tiers > li:first-child{border-top:0}
+.about .tiers .t{
+  font:500 .72rem/1.3 "IBM Plex Mono",ui-monospace,monospace; letter-spacing:.06em;
+  text-transform:uppercase; color:var(--muted); white-space:nowrap;
+}
+.about .tiers .t b{color:var(--accent); font-weight:600}
+.about .pipe{list-style:none; counter-reset:pp; margin:2px 0 4px; padding:0}
+.about .pipe > li{
+  position:relative; padding:7px 0 7px 30px; border-top:1px solid var(--hair);
+}
+.about .pipe > li:first-child{border-top:0}
+.about .pipe > li::before{
+  counter-increment:pp; content:counter(pp);
+  position:absolute; left:0; top:7px;
+  font:600 .7rem/1.55 "IBM Plex Mono",ui-monospace,monospace; color:var(--accent);
+}
+.about .nope{
+  border-left:var(--rule) solid var(--mid); background:var(--mid-bg);
+  padding:9px 0 9px 12px; border-radius:0 3px 3px 0; margin:4px 0 0;
+  font-size:.92rem;
+}
+.about .nope b{color:var(--mid)}
 .about .lang-note{
   border-left:var(--rule) solid var(--hair); padding:8px 0 8px 12px;
   color:var(--muted); font-size:.9rem; margin-top:16px;
@@ -530,11 +557,30 @@ footer p{grid-column:2; font-size:.775rem; color:var(--muted); line-height:1.6; 
     <h3>Що це</h3>
     <p>Сторінка-монітор про пошук людей, які зникли після повені 26 серпня 2026 року на кордоні Непалу й Тибету — у долині Бхоте-Косі, біля переходу К'їронг–Расувагаді. Її веде родина одного з тих, кого шукають, для інших таких самих родин.</p>
 
-    <h3>Для чого</h3>
-    <p>Коли зникає багато людей одночасно, відомості про них розсипаються по десятках джерел різними мовами: зведення непальських відомств, заяви китайської сторони, дипломатичні канали, місцева преса, чутки в чатах. Родина фізично не може за цим стежити — а саме родині щодня доводиться вирішувати, чому вірити. Ця сторінка збирає все в одному місці двічі на добу й каже, що з цього перевірено, а що ні.</p>
+    <h3>Яку задачу це розвʼязує</h3>
+    <p>Про одну й ту саму подію одночасно звітують кілька незалежних державних систем — непальська, китайська, українська, — і вони не збігаються між собою: ні цифрами, ні темпом публікацій, ні мовою, ні навіть визначенням того, кого вважати зниклим. Звіряти їх щодня — робота на кілька годин, і вона потребує доступу до першоджерел, а не до переказів. У родини немає ні цього часу, ні цього доступу, а рішення, чому вірити, доводиться ухвалювати саме їй. Цю звірку робить ця сторінка.</p>
 
-    <h3>Як це працює</h3>
-    <p>Двічі на добу, о 09:00 і 20:00 за Києвом, джерела перевіряються заново. Кожне твердження має позначку достовірності — «Підтверджено», «Висока», «Середня», «Низька» — і посилання на першоджерело. Цифри лишаються з датою, коли їх оприлюднили: якщо свіжого зведення немає, сторінка так і пише, а не переставляє стару цифру під нову дату. Коли джерела суперечать одне одному, обидві версії лишаються поруч із назвами джерел — сторінка не обирає зручнішу. Помилки виправляються відкрито, в тексті, а не тихо.</p>
+    <h3>Що входить у перевірку</h3>
+    <ul class="tiers">
+      <li><span class="t"><b>1</b> Непал</span><span>NDRRMA (орган з управління катастрофами), поліція Непалу та її Центральна криміналістична лабораторія, МЗС Непалу, районні адміністрації, армія Непалу й APF (воєнізована поліція).</span></li>
+      <li><span class="t"><b>2</b> Україна</span><span>МЗС України, посольства України в Індії та КНР — заяви, брифінги, офіційні повідомлення.</span></li>
+      <li><span class="t"><b>3</b> Китай</span><span>Позиція китайської сторони — через дипломатичні канали й через матеріали міжнародних агенцій, яким китайська влада давала доступ на місце.</span></li>
+      <li><span class="t"><b>4</b> Преса</span><span>Інформагенції та непальські видання — але тільки ті матеріали, де видно, який орган і коли оприлюднив цифру.</span></li>
+    </ul>
+
+    <div class="nope"><b>Що не входить узагалі:</b> повідомлення без названого джерела; пересилання в чатах; агрегатори, які не показують першоджерела; матеріали, де заголовок не збігається з цифрою у власному тексті. Такі повідомлення трапляються, і сторінка іноді розбирає їх окремо — але як приклад того, що не варто пересилати, а не як дані.</div>
+
+    <h3>Що з цим робиться далі</h3>
+    <ol class="pipe">
+      <li>Кожна цифра привʼязується до органу, який її оприлюднив, і до дати та години публікації. Без цієї пари цифра на сторінку не потрапляє.</li>
+      <li>Коли два джерела дають різні числа про одне й те саме, обидва лишаються поруч із назвами джерел. Сторінка не обирає зручніше й не усереднює.</li>
+      <li>Кожне твердження отримує позначку достовірності — <span class="badge b-ok">Підтв.</span> назвав офіційний орган або підтверджують два незалежні джерела, <span class="badge b-high">Висока</span> одне надійне джерело без суперечностей, <span class="badge b-mid">Середня</span> одне джерело або часткова суперечність, <span class="badge b-low">Низька</span> ходить мережею, але не підтверджене.</li>
+      <li>Якщо свіжих даних немає, сторінка так і пише — і вказує, скільки діб триває пауза. Стара цифра не переставляється під нову дату.</li>
+      <li>Власні помилки виправляються в тексті, з описом того, що саме було не так. Кілька таких виправлень є в хроніці нижче.</li>
+    </ol>
+
+    <h3>Ритм</h3>
+    <p>Двічі на добу, о 09:00 і 20:00 за Києвом. Зверху — те, що змінилось за останню перевірку; нижче — вся хроніка від початку, від найновішого до найстарішого; в самому низу — історія всіх перевірок, щоб будь-яке твердження можна було знайти разом із його датою.</p>
 
     <h3>Чому саме так</h3>
     <p>Бо в такій ситуації найбільше шкодить не брак новин, а несправжня певність. Заголовок, який не збігається з власним текстом; торішня цифра під сьогоднішньою датою; «мені сказали в чаті» — усе це коштує родинам сил, яких у них і так немає. Тому тут краще сказати «сьогодні змін немає», ніж заповнити день чимось схожим на новину. І з тієї самої причини тут ніколи не називають, скільки саме громадян України розшукують: за будь-якою такою цифрою живі люди та їхні родини, і ця сторінка не веде їм рахунок.</p>
@@ -546,11 +592,30 @@ footer p{grid-column:2; font-size:.775rem; color:var(--muted); line-height:1.6; 
     <h3>What this is</h3>
     <p>A monitoring page about the search for people missing since the flood of 26 August 2026 on the Nepal–Tibet border — in the Bhote Koshi valley, near the Gyirong–Rasuwagadhi crossing. It is kept by the family of one of the missing, for other families in the same position.</p>
 
-    <h3>What it is for</h3>
-    <p>When many people go missing at once, what is known about them scatters across dozens of sources in several languages: Nepali agency briefings, Chinese statements, diplomatic channels, local press, and rumour in group chats. A family cannot realistically track that — and yet it is the family who has to decide, every day, what to believe. This page gathers it in one place twice a day and says plainly which parts are verified and which are not.</p>
+    <h3>The problem it solves</h3>
+    <p>Several independent state systems — Nepali, Chinese, Ukrainian — report on the same event at the same time, and they do not agree: not on the figures, not on the publication rhythm, not on the language, not even on who counts as missing. Reconciling them daily is several hours of work and requires access to primary sources rather than to retellings. A family has neither that time nor that access, and yet it is the family that has to decide what to believe. This page does that reconciliation.</p>
 
-    <h3>How it works</h3>
-    <p>Sources are re-checked twice daily, at 09:00 and 20:00 Kyiv time. Every statement carries a confidence marker — Confirmed, High, Medium, Low — and a link to its primary source. Figures keep the date on which they were published: when there is no fresh briefing, the page says so rather than restamping an old number with a new date. Where sources conflict, both versions stay side by side with their sources named; the page does not pick the more convenient one. Corrections are made openly, in the text, rather than quietly.</p>
+    <h3>What goes into the check</h3>
+    <ul class="tiers">
+      <li><span class="t"><b>1</b> Nepal</span><span>NDRRMA (the national disaster authority), Nepal Police and its Central Forensic Science Laboratory, the Ministry of Foreign Affairs, district administrations, the Nepal Army and the Armed Police Force.</span></li>
+      <li><span class="t"><b>2</b> Ukraine</span><span>Ukraine's Ministry of Foreign Affairs and its embassies in India and the PRC — statements, briefings, official notices.</span></li>
+      <li><span class="t"><b>3</b> China</span><span>The Chinese side's position, through diplomatic channels and through reporting by international agencies given access to the site by the Chinese authorities.</span></li>
+      <li><span class="t"><b>4</b> Press</span><span>News agencies and Nepali outlets — but only those items that show which body published a figure, and when.</span></li>
+    </ul>
+
+    <div class="nope"><b>What never goes in:</b> anything without a named source; forwarded messages from group chats; aggregators that do not show a primary source; articles whose headline disagrees with the figure in their own text. Such items do exist, and the page occasionally takes one apart — as an example of what not to forward, never as data.</div>
+
+    <h3>What is then done with it</h3>
+    <ol class="pipe">
+      <li>Every figure is tied to the body that published it and to the date and hour of publication. Without that pair, a figure does not go on the page.</li>
+      <li>When two sources give different numbers for the same thing, both stay, side by side, with their sources named. The page does not pick the more convenient one and does not average them.</li>
+      <li>Every statement gets a confidence marker — <span class="badge b-ok">Confirmed</span> stated by a named official body, or reported by two independent sources; <span class="badge b-high">High</span> one reliable source, nothing contradicting it; <span class="badge b-mid">Medium</span> single-sourced or partly contradicted; <span class="badge b-low">Low</span> circulating but unverified.</li>
+      <li>When there is no fresh data, the page says so and states how many days the pause has run. An old figure is never restamped with a new date.</li>
+      <li>The page's own errors are corrected in the text, with what was wrong stated plainly. Several such corrections are in the log below.</li>
+    </ol>
+
+    <h3>Rhythm</h3>
+    <p>Twice a day, at 09:00 and 20:00 Kyiv time. At the top, what changed since the last check; below it, the whole log from the beginning, newest first; at the very bottom, the history of every check, so that any statement can be found again together with its date.</p>
 
     <h3>Why it is built this way</h3>
     <p>Because in a situation like this the greater harm is not the absence of news but false certainty. A headline that contradicts its own article; last week's figure under today's date; "someone in a chat said" — each of these costs families energy they do not have. So it is better here to say "nothing changed today" than to fill the day with something news-shaped. For the same reason this page never states how many Ukrainian citizens are being sought: behind any such number are living people and their families, and this page does not keep a tally of them.</p>

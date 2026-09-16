@@ -60,6 +60,7 @@ for (const mode of MODES) {
       // Прихована мовна версія (display:none) лишає нульові бокси в одній точці.
       // Для геометрії це те саме, що згорнутий <details>: міряти можна лише видиме.
       const isVisible = el => {
+        if (!el || typeof el.getBoundingClientRect !== 'function') return false;
         const r = el.getBoundingClientRect();
         return r.width > 0 && r.height > 0;
       };
@@ -70,7 +71,12 @@ for (const mode of MODES) {
       // Елементи, що вилізли за межі контейнера — з обох боків, і скануємо ВСЕ тіло,
       // а не тільки нащадків .shell: зайвий </div> раніше викидав цілі секції ЗА .shell,
       // і перевірка всередині .shell їх просто не бачила.
-      const shell = document.querySelector('.shell').getBoundingClientRect();
+      // .shell є на моніторі; інші сторінки цього проєкту мають власну обгортку,
+      // тому за відсутності .shell міряємо по видимій ширині документа.
+      const shellEl = document.querySelector('.shell');
+      const shell = shellEl
+        ? shellEl.getBoundingClientRect()
+        : { left: 0, right: document.documentElement.clientWidth };
       out.escaped = [];
       document.querySelectorAll('body *').forEach(el => {
         if (el.classList.contains('shell') || el.closest('script')) return;
@@ -87,7 +93,7 @@ for (const mode of MODES) {
 
       // структурний інваріант: усі секції та футер мусять бути всередині .shell
       out.outsideShell = [];
-      document.querySelectorAll('section.block, footer').forEach(el => {
+      document.querySelectorAll(shellEl ? 'section.block, footer' : 'nothing-here').forEach(el => {
         if (!el.closest('.shell')) out.outsideShell.push(el.id || el.tagName);
       });
 
