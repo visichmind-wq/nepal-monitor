@@ -387,3 +387,15 @@ cd nepal-monitor && npm install
 це один раз було помилково сказано, що деплой не пройшов. Правильний
 спосіб: `curl` на самому маку через osascript. Шел `device_bash`
 не годиться — у нього немає зовнішньої мережі, тільки osascript.
+
+## Якщо контейнер перезапустили (перевірено 04.10.2026)
+
+Робоча тека в хмарі зникає разом із контейнером. Відновлення:
+
+1. `cd /home/claude && git clone https://github.com/visichmind-wq/nepal-monitor.git` — читання з GitHub через проксі працює, запис (push) ні: проксі повертає 403, бо репозиторій не в дозволеному наборі сесії.
+2. `cd nepal-monitor && npm install playwright` — без цього `audit.mjs` падає з ERR_MODULE_NOT_FOUND. `node_modules/` внесено в `.gitignore`.
+3. Патч-скрипти (`patch_*.py`) в репозиторії не зберігаються — вони одноразові, пишуться наново під кожен зріз.
+
+Публікація, як і раніше, тільки через мак: `device_commit_files` у `/Users/oleksandr.visich/code/nepal-monitor/index.html`, далі на маку `git add -A && git commit && git push origin main`. Перед цим прибрати застряглі локи:
+`for f in .git/*.lock .git/refs/remotes/origin/*.lock .git/refs/heads/*.lock; do [ -e "$f" ] && mv "$f" ".git/lockjunk-$(date +%s%N)"; done`
+Перевірка проду — `osascript` curl на маку, кожен `grep` із `|| true`, інакше `do shell script` падає на нульовому збігу.
