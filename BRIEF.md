@@ -399,3 +399,16 @@ cd nepal-monitor && npm install
 Публікація, як і раніше, тільки через мак: `device_commit_files` у `/Users/oleksandr.visich/code/nepal-monitor/index.html`, далі на маку `git add -A && git commit && git push origin main`. Перед цим прибрати застряглі локи:
 `for f in .git/*.lock .git/refs/remotes/origin/*.lock .git/refs/heads/*.lock; do [ -e "$f" ] && mv "$f" ".git/lockjunk-$(date +%s%N)"; done`
 Перевірка проду — `osascript` curl на маку, кожен `grep` із `|| true`, інакше `do shell script` падає на нульовому збігу.
+
+## Доступ до GitHub (полагоджено 04.10.2026)
+
+Пуш ламався двічі й з різних причин:
+
+1. В адресі `origin` був вшитий fine-grained токен, і він протермінувався — сервер відповідав «Invalid username or token». Токен з адреси прибрано.
+2. Після цього git брав із Keychain обліковку `oles-mh` (її туди поклав `gh`), а в неї немає права запису в `visichmind-wq/nepal-monitor` — 403 «Permission denied to oles-mh».
+
+Рішення: у адресі origin вказано ім'я користувача без токена —
+`https://visichmind-wq@github.com/visichmind-wq/nepal-monitor.git`.
+Тепер git питає Keychain саме про `visichmind-wq` і бере правильний токен. Сам токен Олесь поклав у Keychain вручну через `~/code/nepal-monitor-token.command` (скрипт питає токен, не показує його і кладе через `git credential approve`).
+
+Якщо пуш колись знову дасть 403 на `oles-mh` — перевіряти `git remote -v`: ім'я користувача в адресі має бути `visichmind-wq`.
