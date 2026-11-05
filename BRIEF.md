@@ -395,6 +395,16 @@ cd nepal-monitor && npm install
 1. `cd /home/claude && git clone https://github.com/visichmind-wq/nepal-monitor.git` — читання з GitHub через проксі працює, запис (push) ні: проксі повертає 403, бо репозиторій не в дозволеному наборі сесії.
 2. `cd nepal-monitor && npm install playwright` — без цього `audit.mjs` падає з ERR_MODULE_NOT_FOUND. `node_modules/` внесено в `.gitignore`.
 3. Патч-скрипти (`patch_*.py`) в репозиторії не зберігаються — вони одноразові, пишуться наново під кожен зріз.
+4. **Playwright може не знайти браузер (виявлено 05.11.2026).** Свіжий `npm install playwright` тягне версію, яка шукає свою ревізію chromium, а в контейнері передвстановлена інша — падає з «Failed to launch chromium because executable doesn't exist at /opt/pw-browsers/chromium-NNNN/chrome-linux/chrome». `playwright install` запускати НЕ треба. Лікується симлінками (ми root):
+
+```
+ls /opt/pw-browsers/                      # побачити наявну ревізію, напр. chromium-1243
+ln -sfn /opt/pw-browsers/chromium-1243 /opt/pw-browsers/chromium-NNNN
+ln -sfn /opt/pw-browsers/chromium_headless_shell-1243 /opt/pw-browsers/chromium_headless_shell-NNNN
+ln -sfn /opt/pw-browsers/chromium-1243/chrome-linux64 /opt/pw-browsers/chromium-1243/chrome-linux
+```
+
+Останній рядок окремо важливий: у наявній збірці тека зветься `chrome-linux64`, а playwright шукає `chrome-linux`. NNNN — ревізія з тексту помилки.
 
 Публікація, як і раніше, тільки через мак: `device_commit_files` у `/Users/oleksandr.visich/code/nepal-monitor/index.html`, далі на маку `git add -A && git commit && git push origin main`. Перед цим прибрати застряглі локи:
 `for f in .git/*.lock .git/refs/remotes/origin/*.lock .git/refs/heads/*.lock; do [ -e "$f" ] && mv "$f" ".git/lockjunk-$(date +%s%N)"; done`
