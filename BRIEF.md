@@ -423,6 +423,36 @@ ln -sfn /opt/pw-browsers/chromium-1243/chrome-linux64 /opt/pw-browsers/chromium-
 
 Якщо пуш колись знову дасть 403 на `oles-mh` — перевіряти `git remote -v`: ім'я користувача в адресі має бути `visichmind-wq`.
 
+### Keychain перестав віддавати пароль (11.11.2026)
+
+Пуш з мака почав падати на `fatal: could not read Password for 'https://visichmind-wq@github.com': Device not configured`. Це не 403 і не протермінований токен: helper `osxkeychain` просто не може віддати обліковку неінтерактивно (osascript працює без термінала й без розблокованого сеансу Keychain).
+
+Робочий обхід — пушити через `gh`, який тримає свій токен у keyring і віддає його без термінала:
+
+```
+cd /Users/oleksandr.visich/code/nepal-monitor && export PATH=/opt/homebrew/bin:$PATH && \
+  git -c credential.helper='!gh auth git-credential' push origin main
+```
+
+`PATH` обов'язковий: у середовищі osascript `/opt/homebrew/bin` немає, і `gh` не знаходиться.
+
+Друга пастка того самого дня: пуш 770-кілобайтного файла не встигає відповісти за 80 с, виклик падає з таймаутом, а міст часто відпадає саме на ньому — і стан лишається невідомим. Тому пуш треба запускати відчепленим і не чекати на нього:
+
+```
+nohup git -c credential.helper='!gh auth git-credential' push origin main > /tmp/nm_push.log 2>&1 &
+echo STARTED
+```
+
+### Перевіряти публікацію можна без мака
+
+З контейнера `git push` заборонений проксі, але **`git fetch` до цього репозиторію працює**. Тому факт публікації завжди перевіряється локально, не чекаючи мака:
+
+```
+cd /home/claude/nepal-monitor && git fetch origin main -q && git rev-parse --short FETCH_HEAD
+```
+
+`git rev-parse origin/main` при цьому не рухається — дивитись саме на `FETCH_HEAD`. Це єдиний надійний спосіб дізнатись, чи дійшов пуш, коли osascript обірвався на таймауті.
+
 ## Пастка `device_commit_files` (виявлено 15.10.2026)
 
 Якщо двічі за сесію віддати на мак файл з тим самим `stagedPath` (наприклад `/mnt/user-data/outputs/index.html`), другий раз міст запише **старий** вміст: відповідь буде `written`, а на маку лишиться попередня версія. Симптом — на маку `git status` каже «нічого комітити, робоче дерево чисте», хоч контейнерний файл точно змінився.
